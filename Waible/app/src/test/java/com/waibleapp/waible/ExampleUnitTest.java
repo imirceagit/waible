@@ -1,4 +1,4 @@
-package waibleapp.com.waible;
+package com.waibleapp.waible;
 
 import org.junit.Test;
 
