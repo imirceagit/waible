@@ -10,14 +10,16 @@ import android.widget.TextView;
 import com.waibleapp.waible.R;
 import com.waibleapp.waible.fragments.SignInFragment;
 
-public class AuthActivity extends AppCompatActivity {
+public class AuthActivity extends AppCompatActivity{
 
-    TextView signUpTextView;
+    public static AuthActivity authActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
+
+        authActivity = this;
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.auth_fragment_container);
@@ -26,14 +28,5 @@ public class AuthActivity extends AppCompatActivity {
             fragment = new SignInFragment();
             fragmentManager.beginTransaction().add(R.id.auth_fragment_container, fragment).commit();
         }
-
-        signUpTextView = (TextView) findViewById(R.id.sign_up_text_view);
-
-        signUpTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                
-            }
-        });
     }
 }

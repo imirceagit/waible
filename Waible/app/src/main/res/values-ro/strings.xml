@@ -7,6 +7,6 @@
     <string name="password_edit_text">Parolă</string>
     <string name="sign_in_button">Conectare</string>
     <string name="sign_up_button">Inregistrare</string>
-    <string name="sign_up_text_view">Spre inregistrat</string>
+    <string name="sign_up_text_view">Spre inregistrare</string>
     <string name="sign_in_text_view">Spre conectare</string>
 </resources>
