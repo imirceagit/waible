@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Waible</string>
     <string name="call_waiter_button">Cheamă chelner</string>
+
+    <string name="full_name_edit_text">Nume complet</string>
+    <string name="email_edit_text">Email</string>
+    <string name="password_edit_text">Parolă</string>
+    <string name="sign_in_button">Conectare</string>
+    <string name="sign_up_button">Inregistrare</string>
+    <string name="sign_up_text_view">Spre inregistrat</string>
+    <string name="sign_in_text_view">Spre conectare</string>
 </resources>

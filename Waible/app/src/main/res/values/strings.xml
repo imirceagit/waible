@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Waible</string>
     <string name="call_waiter_button">Call waiter</string>
+
+    <string name="full_name_edit_text">Name</string>
+    <string name="email_edit_text">Email</string>
+    <string name="password_edit_text">Passowrd</string>
+    <string name="sign_in_button">Sign In</string>
+    <string name="sign_up_button">Sign Up</string>
+    <string name="sign_up_text_view">Sign Up</string>
+    <string name="sign_in_text_view">Sign In</string>
 </resources>
