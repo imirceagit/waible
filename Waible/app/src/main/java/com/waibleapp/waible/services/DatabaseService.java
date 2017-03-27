@@ -20,18 +20,21 @@ public class DatabaseService {
 
     private FirebaseDatabase firebaseDatabase;
 
+    private LoginHandler loginHandler;
+
     //REFERENCES
     DatabaseReference userDatabaseReference;
 
-    public static DatabaseService getInstance() {
+    public static DatabaseService getInstance(LoginHandler lh) {
         if (ourInstance == null){
-            ourInstance = new DatabaseService();
+            ourInstance = new DatabaseService(lh);
         }
         return ourInstance;
     }
 
-    private DatabaseService() {
+    private DatabaseService(LoginHandler lh) {
         firebaseDatabase = FirebaseDatabase.getInstance();
+        loginHandler = lh;
     }
 
     public void saveUserInfo(User user){
@@ -43,6 +46,8 @@ public class DatabaseService {
         userDatabaseReference.child(user.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                loginHandler.setLoggedUser(user);
                 Log.v(TAG, dataSnapshot.getValue().toString());
             }
 

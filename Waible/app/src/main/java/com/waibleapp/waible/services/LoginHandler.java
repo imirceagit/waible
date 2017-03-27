@@ -25,6 +25,7 @@ public class LoginHandler {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    private boolean isLoggedIn;
     private boolean firstLogin;
 
     private MainActivity mainActivity;
@@ -36,6 +37,7 @@ public class LoginHandler {
         loggedUser = new User();
         mAuth = FirebaseAuth.getInstance();
 
+        isLoggedIn = false;
         firstLogin = false;
 
         databaseService = DatabaseService.getInstance();
@@ -46,12 +48,15 @@ public class LoginHandler {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if(user != null) {
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    isLoggedIn = true;
                     loggedUser.setUserId(user.getUid());
+                    loggedUser.setEmail(user.getEmail());
                     if (firstLogin) {
                         databaseService.saveUserInfo(loggedUser);
                     }
                 }else {
                     Log.d(TAG, "onAuthStateChanged:signed_out");
+                    isLoggedIn = false;
                 }
 
             }
@@ -100,6 +105,14 @@ public class LoginHandler {
 
     public User getUserInfo(){
         return null;
+    }
+
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        isLoggedIn = loggedIn;
     }
 
     public User getLoggedUser() {
