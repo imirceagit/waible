@@ -9,4 +9,7 @@
     <string name="sign_up_button">Inregistrare</string>
     <string name="sign_up_text_view">Spre inregistrare</string>
     <string name="sign_in_text_view">Spre conectare</string>
+
+    <string name="auth_failed">Autentificarea a esuat</string>
+    <string name="user_already_exist">Acest utilizator este deja inregistrat</string>
 </resources>
