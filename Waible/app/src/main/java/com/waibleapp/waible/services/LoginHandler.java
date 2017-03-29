@@ -24,9 +24,9 @@ public class LoginHandler {
 
     private LoginEntity loginEntity;
 
-    public LoginHandler(LoginEntity loginEntity) {
+    public LoginHandler() {
         mAuth = FirebaseAuth.getInstance();
-        this.loginEntity = loginEntity;
+        this.loginEntity = MainActivity.loginEntity;
     }
 
     public void createUserWithEmailAndPassword(String email, String password){

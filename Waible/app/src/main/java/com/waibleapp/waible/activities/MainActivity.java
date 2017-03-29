@@ -27,30 +27,32 @@ import com.waibleapp.waible.fragments.AuthFragment;
 import com.waibleapp.waible.fragments.MainFragment;
 import com.waibleapp.waible.fragments.MenuFragment;
 import com.waibleapp.waible.model.LoginEntity;
+import com.waibleapp.waible.model.OnUpdateUIListener;
+import com.waibleapp.waible.model.Restaurant;
 import com.waibleapp.waible.services.LoginHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnMainFragmentInteractionListener, AuthFragment.OnAuthFragmentInteractionListener, MenuFragment.OnMenuFragmentInteractionListener{
 
     private final String TAG = "MainActivity";
     public static MainActivity mainActivity;
 
+    private List<OnUpdateUIListener> onUpdateUIListeners;
+
     //FRAGMENTS
     private FragmentManager fragmentManager;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    private LoginEntity loginEntity;
+    public static LoginEntity loginEntity;
     private LoginHandler loginHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mainActivity = this;
-        mAuth = FirebaseAuth.getInstance();
-        loginEntity = new LoginEntity();
-        loginHandler = new LoginHandler(loginEntity);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -63,12 +65,19 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
             fragmentManager.beginTransaction().add(R.id.fragment_container, fragment).commit();
         }
 
+        mainActivity = this;
+        mAuth = FirebaseAuth.getInstance();
+        loginEntity = new LoginEntity();
+        loginHandler = new LoginHandler();
+
+        onUpdateUIListeners = new ArrayList<>();
+
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user == null){
-                    Log.v(TAG, "loggedOut" + user.getUid());
+                    Log.v(TAG, "loggedOut");
                     openAuthFragment();
                 }else {
                     Log.v(TAG, "loggedIn" + user.getUid());
@@ -95,15 +104,41 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
         Toast.makeText(mainActivity, resId, Toast.LENGTH_SHORT).show();
     }
 
+    private void processScan(String scan){
+        String restaurantName = scan;
+        restaurantName = restaurantName.replace("http://waibleapp.com/", "");
+        restaurantName = restaurantName.replace("_", " ");
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName(restaurantName);
+        loginEntity.setRestaurant(restaurant);
+    }
+
+    private void updateUI(){
+        for (OnUpdateUIListener listener : onUpdateUIListeners){
+            listener.onUpdateUIListener();
+        }
+    }
+
+    public void addOnUpdateUIListeners(OnUpdateUIListener listener){
+        onUpdateUIListeners.add(listener);
+    }
+
+    public void removeOnUpdateUIListeners(OnUpdateUIListener listener){
+        onUpdateUIListeners.remove(listener);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null){
-            if(result.getContents() == null) {
+            String scannerResult = result.getContents();
+            Log.d(TAG, "scannerResult ============ " + scannerResult);
+            if(scannerResult == null) {
                 Log.d(TAG, "Cancelled scan");
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-            } else {
-                Log.d(TAG, "Scanned " + result.getContents());
+            }else {
+                Log.d(TAG, "Scanned " + scannerResult);
+                processScan(scannerResult);
                 Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
             }
         } else {

@@ -8,6 +8,7 @@ public class LoginEntity {
 
     private String uid;
     private User user;
+    private Restaurant restaurant;
 
     public String getUid() {
         return uid;
@@ -23,5 +24,13 @@ public class LoginEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
     }
 }

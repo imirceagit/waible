@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +15,20 @@ import android.widget.TextView;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.waibleapp.waible.R;
 import com.waibleapp.waible.activities.MainActivity;
+import com.waibleapp.waible.model.LoginEntity;
+import com.waibleapp.waible.model.OnUpdateUIListener;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements OnUpdateUIListener{
 
     private final String TAG = "MainFragment";
 
     private OnMainFragmentInteractionListener mListener;
+    private LoginEntity loginEntity;
 
     private TextView mainRestaurantName;
 
     public MainFragment() {
-
+        this.loginEntity = MainActivity.loginEntity;
     }
 
     @Override
@@ -32,7 +36,7 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
-        if (actionBar.isShowing()){
+        if (actionBar != null && actionBar.isShowing()){
             actionBar.hide();
         }
     }
@@ -42,8 +46,11 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
+        if (loginEntity.getRestaurant() == null){
+            openScanner();
+        }
+
         mainRestaurantName = (TextView) view.findViewById(R.id.main_restaurant_name);
-        mainRestaurantName.setText("LA MAMA");
 
         Button seeMenuButton = (Button) view.findViewById(R.id.see_menu_button);
         seeMenuButton.setOnClickListener(new View.OnClickListener() {
@@ -67,9 +74,14 @@ public class MainFragment extends Fragment {
             }
         });
 
-//        openScanner();
-
+        updateMainFragmentUI();
         return view;
+    }
+
+    private void updateMainFragmentUI(){
+        if (loginEntity.getRestaurant() != null){
+            mainRestaurantName.setText(loginEntity.getRestaurant().getName());
+        }
     }
 
     private void openScanner(){
@@ -103,6 +115,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        MainActivity.mainActivity.addOnUpdateUIListeners(this);
         if (context instanceof OnMainFragmentInteractionListener) {
             mListener = (OnMainFragmentInteractionListener) context;
         } else {
@@ -114,7 +127,13 @@ public class MainFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        MainActivity.mainActivity.removeOnUpdateUIListeners(this);
         mListener = null;
+    }
+
+    @Override
+    public void onUpdateUIListener() {
+        updateMainFragmentUI();
     }
 
     public interface OnMainFragmentInteractionListener {

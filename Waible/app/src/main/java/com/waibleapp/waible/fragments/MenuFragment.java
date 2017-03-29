@@ -34,7 +34,7 @@ public class MenuFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
-        if (!actionBar.isShowing()){
+        if (actionBar != null && !actionBar.isShowing()){
             actionBar.show();
             actionBar.setTitle("LA MAMA");
         }
