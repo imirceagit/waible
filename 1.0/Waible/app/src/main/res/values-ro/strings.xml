@@ -7,8 +7,11 @@
     <string name="password_edit_text">Parolă</string>
     <string name="sign_in_button">Conectare</string>
     <string name="sign_up_button">Inregistrare</string>
-    <string name="sign_up_text_view">Spre inregistrare</string>
-    <string name="sign_in_text_view">Spre conectare</string>
+    <string name="sign_up_text_view">Nu ai cont? Inregistreaza-te acum!</string>
+    <string name="sign_in_text_view">Ai cont? Conecteaza-te!</string>
+    <string name="sign_in_mail_or_fb">- sau -</string>
+
+    <string name="scanner_button">Scaneaza masa</string>
 
     <string name="auth_failed">Autentificarea a esuat</string>
     <string name="user_already_exist">Acest utilizator este deja inregistrat</string>

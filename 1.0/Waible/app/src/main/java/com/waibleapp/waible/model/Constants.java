@@ -1,12 +1,13 @@
 package com.waibleapp.waible.model;
 
 /**
- * Created by Mircea-Ionel on 3/24/2017.
+ * Created by mircea.ionita on 3/28/2017.
  */
 
 public class Constants {
 
-    public interface NOTIFICATION_ID {
-        int FOREGROUND_SERVICE = 101;
+    public interface AuthFragmentActions {
+        String signInButtonClicked = "authFragments.signInButtonClicked";
+        String signUpButtonClicked = "authFragments.signUpButtonClicked";
     }
 }

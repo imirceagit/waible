@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">Waible</string>
-    <string name="action_settings">Settings</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_main_action_settings">Settings</string>
+    <string name="menu_main_action_sign_out">Sign Out</string>
+
+    <string name="see_menu_button">See the Menu</string>
+    <string name="call_waiter_button">Call for a Waiter</string>
+    <string name="get_check_button">Get the Check</string>
+
 </resources>

@@ -1,0 +1,72 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.waibleapp.waible.fragments.AuthFragment">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/sign_in_layout"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+
+            <EditText
+                android:id="@+id/full_name_edit_text"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:hint="@string/full_name_edit_text"/>
+
+            <EditText
+                android:id="@+id/email_edit_text"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:inputType="textEmailAddress"
+                android:hint="@string/email_edit_text"/>
+
+            <EditText
+                android:id="@+id/password_edit_text"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:inputType="textPassword"
+                android:hint="@string/password_edit_text"/>
+
+            <Button
+                android:id="@+id/sign_in_button"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:text="@string/sign_in_button"/>
+
+            <Button
+                android:id="@+id/sign_up_button"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:text="@string/sign_up_button"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:text="@string/sign_in_mail_or_fb"
+                android:textAlignment="center"/>
+
+            <Button
+                android:id="@+id/fb"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:text="Facebook"/>
+
+            <TextView
+                android:id="@+id/sign_in_sign_up"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:text="@string/sign_in_text_view"
+                android:textAlignment="center"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>

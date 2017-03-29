@@ -7,8 +7,11 @@
     <string name="password_edit_text">Passowrd</string>
     <string name="sign_in_button">Sign In</string>
     <string name="sign_up_button">Sign Up</string>
-    <string name="sign_up_text_view">Sign Up</string>
-    <string name="sign_in_text_view">Sign In</string>
+    <string name="sign_up_text_view">Don\'t have an account? Register Now!</string>
+    <string name="sign_in_text_view">You have an account? Sign In!</string>
+    <string name="sign_in_mail_or_fb">- or -</string>
+
+    <string name="scanner_button">Scan table</string>
 
     <string name="auth_failed">Authentication failed</string>
     <string name="user_already_exist">User with this email already exist.</string>

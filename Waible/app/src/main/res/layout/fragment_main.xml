@@ -1,13 +1,51 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.waibleapp.waible.fragments.MainFragment">
+    tools:context="com.waibleapp.waible.fragments.MainFragment"
+    android:background="@color/colorWhite">
 
+    <Button
+        android:text="@string/see_menu_button"
+        android:layout_width="250dp"
+        android:layout_height="55dp"
+        android:id="@+id/see_menu_button"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/call_waiter_button"
+        android:layout_marginBottom="8dp"
+        android:background="@color/colorAction"
+        android:textColor="@color/colorWhite"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="MAIN" />
+    <Button
+        android:text="@string/call_waiter_button"
+        android:layout_width="250dp"
+        android:layout_height="55dp"
+        android:id="@+id/call_waiter_button"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/get_check_button"
+        android:layout_marginBottom="8dp"
+        android:background="@color/colorAction"
+        android:textColor="@color/colorWhite"/>
 
-</FrameLayout>
+    <Button
+        android:text="@string/get_check_button"
+        android:layout_width="250dp"
+        android:layout_height="55dp"
+        android:id="@+id/get_check_button"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="16dp"
+        android:background="@color/colorAction"
+        android:textColor="@color/colorWhite"/>
+</android.support.constraint.ConstraintLayout>
