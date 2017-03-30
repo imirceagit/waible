@@ -23,6 +23,7 @@ import com.waibleapp.waible.fragments.MainFragment;
 import com.waibleapp.waible.fragments.MenuCategoryFragment;
 import com.waibleapp.waible.fragments.MenuFragment;
 import com.waibleapp.waible.fragments.RegisterFragment;
+import com.waibleapp.waible.fragments.ScannerFragment;
 import com.waibleapp.waible.model.Constants;
 import com.waibleapp.waible.listeners.OnUpdateUIListener;
 import com.waibleapp.waible.model.MenuCategory;
@@ -60,14 +61,16 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
 
         sessionEntity = SessionEntity.getInstance();
 
-        if (savedInstanceState == null) {
+//        if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras != null) {
+                Log.v(TAG, "EXTRAS +++ " + extras.getString(Constants.AuthActivityExtras.userIdExtra));
                 setUserToSession(extras.getString(Constants.AuthActivityExtras.userIdExtra));
             }
-        } else {
-            setUserToSession((String) savedInstanceState.getSerializable(Constants.AuthActivityExtras.userIdExtra));
-        }
+//        } else {
+//            Log.v(TAG, "savedInstanceState +++ " + (String) savedInstanceState.getSerializable(Constants.AuthActivityExtras.userIdExtra));
+//            setUserToSession((String) savedInstanceState.getSerializable(Constants.AuthActivityExtras.userIdExtra));
+//        }
 
         mAuth = FirebaseAuth.getInstance();
         loginHandler = LoginHandler.getInstance();
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
         Fragment fragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
 
         if(fragment == null){
-            fragment = new MainFragment();
+            fragment = new ScannerFragment();
             fragmentManager.beginTransaction().add(R.id.main_fragment_container, fragment).commit();
         }
 
@@ -116,6 +119,19 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
         fragmentManager.beginTransaction().replace(R.id.main_fragment_container, new MenuFragment()).addToBackStack(null).commit();
     }
 
+    private void openMenuCategoryFragment(MenuCategory menuCategory, int position){
+        MenuCategoryFragment fragment = new MenuCategoryFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constants.MenuCategoryBundleParams.menuCategoryParam, gson.toJson(menuCategory));
+        bundle.putInt(Constants.MenuCategoryBundleParams.positionParam, position);
+        fragment.setArguments(bundle);
+        fragmentManager.beginTransaction().replace(R.id.main_fragment_container, fragment).addToBackStack(null).commit();
+    }
+
+    private void openScannerFragment(){
+        fragmentManager.beginTransaction().replace(R.id.main_fragment_container, new ScannerFragment()).commit();
+    }
+
     private void setUserToSession(String uid){
         User user;
         if (sessionEntity.getUser() == null){
@@ -127,15 +143,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
             user.setUid(uid);
             sessionEntity.setUser(user);
         }
-    }
-
-    private void openMenuCategoryFragment(MenuCategory menuCategory, int position){
-        MenuCategoryFragment fragment = new MenuCategoryFragment();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(Constants.MenuCategoryBundleParams.menuCategoryParam, gson.toJson(menuCategory));
-        bundle.putInt(Constants.MenuCategoryBundleParams.positionParam, position);
-        fragment.setArguments(bundle);
-        fragmentManager.beginTransaction().replace(R.id.main_fragment_container, fragment).addToBackStack(null).commit();
     }
 
     public static void makeToast(int resId){
@@ -212,8 +219,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
 
     @Override
     protected void onStart() {
-        mAuth.addAuthStateListener(mAuthStateListener);
         super.onStart();
+        mAuth.addAuthStateListener(mAuthStateListener);
     }
 
     @Override

@@ -40,11 +40,11 @@ public class AuthActivity extends AppCompatActivity implements AuthFragment.OnAu
         sessionEntity = SessionEntity.getInstance();
 
         fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
+        Fragment fragment = fragmentManager.findFragmentById(R.id.auth_fragment_container);
 
         if(fragment == null){
             fragment = new AuthFragment();
-            fragmentManager.beginTransaction().add(R.id.main_fragment_container, fragment).commit();
+            fragmentManager.beginTransaction().add(R.id.auth_fragment_container, fragment).commit();
         }
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -62,11 +62,11 @@ public class AuthActivity extends AppCompatActivity implements AuthFragment.OnAu
     }
 
     private void openAuthFragment(){
-        fragmentManager.beginTransaction().replace(R.id.main_fragment_container, new AuthFragment()).commit();
+        fragmentManager.beginTransaction().replace(R.id.auth_fragment_container, new AuthFragment()).commit();
     }
 
     private void openRegisterFragment(){
-        fragmentManager.beginTransaction().replace(R.id.main_fragment_container, new RegisterFragment()).commit();
+        fragmentManager.beginTransaction().replace(R.id.auth_fragment_container, new RegisterFragment()).commit();
     }
 
     private void openMainActivity(String uid){
@@ -102,8 +102,8 @@ public class AuthActivity extends AppCompatActivity implements AuthFragment.OnAu
 
     @Override
     protected void onStart() {
-        mAuth.addAuthStateListener(mAuthStateListener);
         super.onStart();
+        mAuth.addAuthStateListener(mAuthStateListener);
     }
 
     @Override
