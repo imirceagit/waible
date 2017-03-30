@@ -32,7 +32,6 @@ public class MenuCategoryViewHolder extends RecyclerView.ViewHolder {
     public void updateUI(MenuCategory menuCategory){
         cardMenuCategory.setBackgroundResource(MainActivity.mainActivity.getResources().getIdentifier("breakfast", "drawable", MainActivity.mainActivity.getPackageName()));
         cardMenuCategoryName.setText(menuCategory.getName().get(Localization.defaultLanguage));
-        // TODO NUMBER OF ITEMS
-        cardMenuCategoryNoItems.setText(String.valueOf(1));
+        cardMenuCategoryNoItems.setText(String.valueOf(menuCategory.getTotal()));
     }
 }
