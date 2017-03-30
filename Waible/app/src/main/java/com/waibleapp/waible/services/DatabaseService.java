@@ -23,7 +23,6 @@ public class DatabaseService {
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
-
     private SessionEntity sessionEntity;
 
     private DatabaseService() {
@@ -44,6 +43,7 @@ public class DatabaseService {
         menusReference.child(restaurantId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.v(TAG, "getMenuForRestaurant " + dataSnapshot.toString());
                 RestaurantMenu restaurantMenu = dataSnapshot.getValue(RestaurantMenu.class);
                 callback.onCompleteSuccessCallback(restaurantMenu);
             }
@@ -60,9 +60,12 @@ public class DatabaseService {
         restaurantReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.v(TAG, "getRestaurantDetails " + dataSnapshot.toString());
                 Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
                 Restaurant sessionRestaurant = sessionEntity.getRestaurant();
                 sessionRestaurant.cloneRestaurant(restaurant);
+                sessionEntity.setRestaurant(sessionRestaurant);
+                sessionEntity.setRestaurantLoaded(true);
                 callback.onCompleteSuccessCallback(restaurant);
             }
 

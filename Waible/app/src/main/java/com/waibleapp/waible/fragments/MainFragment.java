@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -27,7 +28,13 @@ public class MainFragment extends Fragment implements OnUpdateUIListener{
     private DatabaseService databaseService;
     private SessionEntity sessionEntity;
 
+    private ActionBar actionBar;
+    private RelativeLayout loadingPanel;
+    private TextView mainTitleOne;
     private TextView mainRestaurantName;
+    private Button seeMenuButton;
+    private Button callWaiterButton;
+    private Button getCheckButton;
 
     public MainFragment() {
 
@@ -38,7 +45,7 @@ public class MainFragment extends Fragment implements OnUpdateUIListener{
         super.onCreate(savedInstanceState);
         databaseService = DatabaseService.getInstance();
         sessionEntity = SessionEntity.getInstance();
-        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
+        actionBar = ((MainActivity) getActivity()).getSupportActionBar();
         if (actionBar != null && actionBar.isShowing()){
             actionBar.hide();
         }
@@ -49,22 +56,23 @@ public class MainFragment extends Fragment implements OnUpdateUIListener{
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
+        mainTitleOne = (TextView) view.findViewById(R.id.main_title_one);
         mainRestaurantName = (TextView) view.findViewById(R.id.main_restaurant_name);
-        Button seeMenuButton = (Button) view.findViewById(R.id.see_menu_button);
+        seeMenuButton = (Button) view.findViewById(R.id.see_menu_button);
         seeMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onseeMenuButtonPressed();
+                onSeeMenuButtonPressed();
             }
         });
-        Button callWaiterButton = (Button) view.findViewById(R.id.call_waiter_button);
+        callWaiterButton = (Button) view.findViewById(R.id.call_waiter_button);
         callWaiterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 callWaiterButtonPressed();
             }
         });
-        Button getCheckButton = (Button) view.findViewById(R.id.get_check_button);
+        getCheckButton = (Button) view.findViewById(R.id.get_check_button);
         getCheckButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,11 +80,41 @@ public class MainFragment extends Fragment implements OnUpdateUIListener{
             }
         });
 
+        loadingPanel = (RelativeLayout) view.findViewById(R.id.loading_panel);
+
+        mainTitleOne.setVisibility(View.GONE);
+        seeMenuButton.setVisibility(View.GONE);
+        callWaiterButton.setVisibility(View.GONE);
+        getCheckButton.setVisibility(View.GONE);
+
+        if (!sessionEntity.isRestaurantLoaded()){
+            getRestaurantDetails();
+        }else {
+            updateMainFragmentUI();
+        }
+
+        return view;
+    }
+
+    private void updateMainFragmentUI(){
+        mainRestaurantName.setText(sessionEntity.getRestaurant().getName());
+        if (actionBar != null && actionBar.isShowing()){
+            actionBar.hide();
+        }
+        if (sessionEntity.isRestaurantLoaded()){
+            mainTitleOne.setVisibility(View.VISIBLE);
+            loadingPanel.setVisibility(View.GONE);
+            seeMenuButton.setVisibility(View.VISIBLE);
+            callWaiterButton.setVisibility(View.VISIBLE);
+            getCheckButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void getRestaurantDetails(){
         databaseService.getRestaurantDetails(sessionEntity.getRestaurantPath(), new OnCompleteCallback() {
             @Override
             public void onCompleteSuccessCallback(Object result) {
-                Restaurant restaurant = (Restaurant) result;
-                mainRestaurantName.setText(restaurant.getName());
+                updateMainFragmentUI();
             }
 
             @Override
@@ -84,15 +122,9 @@ public class MainFragment extends Fragment implements OnUpdateUIListener{
                 MainActivity.makeToast(result);
             }
         });
-
-        return view;
     }
 
-    private void updateMainFragmentUI(){
-
-    }
-
-    public void onseeMenuButtonPressed() {
+    public void onSeeMenuButtonPressed() {
         if (mListener != null) {
             mListener.onMainFragmentInteractionMenuButton();
         }
@@ -118,7 +150,7 @@ public class MainFragment extends Fragment implements OnUpdateUIListener{
             mListener = (OnMainFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnMainFragmentInteractionListener");
         }
     }
 

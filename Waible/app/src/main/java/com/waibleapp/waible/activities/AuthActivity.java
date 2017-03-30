@@ -14,6 +14,7 @@ import com.waibleapp.waible.R;
 import com.waibleapp.waible.fragments.AuthFragment;
 import com.waibleapp.waible.fragments.MainFragment;
 import com.waibleapp.waible.fragments.RegisterFragment;
+import com.waibleapp.waible.listeners.OnCompleteCallback;
 import com.waibleapp.waible.model.Constants;
 import com.waibleapp.waible.model.SessionEntity;
 import com.waibleapp.waible.services.LoginHandler;
@@ -26,9 +27,6 @@ public class AuthActivity extends AppCompatActivity implements AuthFragment.OnAu
     private LoginHandler loginHandler;
 
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
-
-    private SessionEntity sessionEntity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +35,6 @@ public class AuthActivity extends AppCompatActivity implements AuthFragment.OnAu
 
         mAuth = FirebaseAuth.getInstance();
         loginHandler = LoginHandler.getInstance();
-        sessionEntity = SessionEntity.getInstance();
 
         fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.auth_fragment_container);
@@ -47,18 +44,9 @@ public class AuthActivity extends AppCompatActivity implements AuthFragment.OnAu
             fragmentManager.beginTransaction().add(R.id.auth_fragment_container, fragment).commit();
         }
 
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user == null){
-
-                }else {
-                    Log.v(TAG, "loggedIn" + user.getUid());
-                    openMainActivity(user.getUid());
-                }
-            }
-        };
+        if (mAuth.getCurrentUser() != null) {
+            openMainActivity();
+        }
     }
 
     private void openAuthFragment(){
@@ -69,10 +57,10 @@ public class AuthActivity extends AppCompatActivity implements AuthFragment.OnAu
         fragmentManager.beginTransaction().replace(R.id.auth_fragment_container, new RegisterFragment()).commit();
     }
 
-    private void openMainActivity(String uid){
+    private void openMainActivity(){
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(Constants.AuthActivityExtras.userIdExtra, uid);
         startActivity(intent);
+        finish();
     }
 
     @Override
@@ -82,7 +70,17 @@ public class AuthActivity extends AppCompatActivity implements AuthFragment.OnAu
 
     @Override
     public void onLoginButtonPressed(String email, String password) {
-        loginHandler.signInWithEmailAndPassword(email, password);
+        loginHandler.signInWithEmailAndPassword(email, password, new OnCompleteCallback() {
+            @Override
+            public void onCompleteSuccessCallback(Object result) {
+                openMainActivity();
+            }
+
+            @Override
+            public void onCompleteErrorCallback(String result) {
+
+            }
+        });
     }
 
     @Override
@@ -103,14 +101,10 @@ public class AuthActivity extends AppCompatActivity implements AuthFragment.OnAu
     @Override
     protected void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthStateListener);
     }
 
     @Override
     protected void onStop() {
-        if (mAuthStateListener != null) {
-            mAuth.removeAuthStateListener(mAuthStateListener);
-        }
         super.onStop();
     }
 }

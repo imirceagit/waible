@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,10 @@ import com.waibleapp.waible.model.SessionEntity;
 import com.waibleapp.waible.services.DatabaseService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MenuFragment extends Fragment implements OnUpdateUIListener {
 
@@ -34,6 +38,7 @@ public class MenuFragment extends Fragment implements OnUpdateUIListener {
     private MenuCategoryAdapter menuCategoryAdapter;
     private SessionEntity sessionEntity;
 
+    private List<MenuCategory> menuCategories;
     private RestaurantMenu restaurantMenu;
 
     public MenuFragment() {
@@ -44,6 +49,7 @@ public class MenuFragment extends Fragment implements OnUpdateUIListener {
         super.onCreate(savedInstanceState);
         sessionEntity = SessionEntity.getInstance();
         databaseService = DatabaseService.getInstance();
+        menuCategories = new ArrayList<>();
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
         if (actionBar != null && !actionBar.isShowing()){
             actionBar.show();
@@ -56,11 +62,18 @@ public class MenuFragment extends Fragment implements OnUpdateUIListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
 
+        HashMap<String, MenuCategory> map = new HashMap<>();
+        HashMap<String, String> names = new HashMap<String, String>();
+        names.put("eu", "Soups");
+        map.put("dasddas", new MenuCategory(names, 8));
+        restaurantMenu = new RestaurantMenu();
+        restaurantMenu.setCategories(map);
+
         databaseService.getMenuForRestaurant(sessionEntity.getRestaurant().getRestaurantId(), new OnCompleteCallback() {
             @Override
             public void onCompleteSuccessCallback(Object result) {
                 restaurantMenu = (RestaurantMenu) result;
-                menuCategoryAdapter.notifyDataSetChanged();
+                updateUI();
             }
 
             @Override
@@ -69,7 +82,8 @@ public class MenuFragment extends Fragment implements OnUpdateUIListener {
             }
         });
 
-        menuCategoryAdapter = new MenuCategoryAdapter(restaurantMenu.getCategories());
+        menuCategories = restaurantMenu.getCategoriesAsList();
+        menuCategoryAdapter = new MenuCategoryAdapter(menuCategories);
         menuCategoryAdapter.addMenuItemInteractionListener(new OnMenuItemInteractionListener() {
             @Override
             public void onMenuItemInteraction(MenuCategory menuCategory, int position) {
@@ -90,7 +104,10 @@ public class MenuFragment extends Fragment implements OnUpdateUIListener {
     }
 
     private void updateUI(){
-
+        Log.v(TAG, "PREV == UPDATE ===== " + menuCategories);
+        menuCategories = restaurantMenu.getCategoriesAsList();
+        Log.v(TAG, "UPDATE ===== " + menuCategories);
+        menuCategoryAdapter.notifyDataSetChanged();
     }
 
     public void onItemSelected(MenuCategory menuCategory, int position) {

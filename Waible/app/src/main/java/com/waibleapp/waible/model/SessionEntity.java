@@ -1,5 +1,7 @@
 package com.waibleapp.waible.model;
 
+import android.util.Log;
+
 import org.apache.commons.lang3.RandomStringUtils;
 
 /**
@@ -8,6 +10,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 public class SessionEntity {
 
+    private final String TAG = "SessionEntity";
+
     private static SessionEntity instance;
 
     private String sessionId;
@@ -15,9 +19,11 @@ public class SessionEntity {
     private String restaurantUserId;
     private Restaurant restaurant;
     private String tableNo;
+    private boolean restaurantLoaded;
     private boolean scanned;
 
     private SessionEntity() {
+        restaurantLoaded = false;
         scanned = false;
         sessionId = RandomStringUtils.randomAlphabetic(10);
     }
@@ -72,6 +78,14 @@ public class SessionEntity {
 
     public void setTableNo(String tableNo) {
         this.tableNo = tableNo;
+    }
+
+    public boolean isRestaurantLoaded() {
+        return restaurantLoaded;
+    }
+
+    public void setRestaurantLoaded(boolean restaurantLoaded) {
+        this.restaurantLoaded = restaurantLoaded;
     }
 
     public boolean isScanned() {

@@ -16,20 +16,21 @@ public class MenuCategory {
 
     @Exclude
     private String categoryId;
-    private HashMap<String, String> name;
+    private Map<String, String> name;
     private int total;
 
     public MenuCategory() {
     }
 
-    public MenuCategory(HashMap<String, String> name) {
-        this.categoryId = FirebaseDatabase.getInstance().getReference().push().getKey();
+    public MenuCategory(Map<String, String> name, int total) {
         this.name = name;
+        this.total = total;
     }
 
-    public MenuCategory(String categoryId, HashMap<String, String> name) {
+    public MenuCategory(String categoryId, Map<String, String> name, int total) {
         this.categoryId = categoryId;
         this.name = name;
+        this.total = total;
     }
 
     public String getCategoryId() {
@@ -40,11 +41,11 @@ public class MenuCategory {
         this.categoryId = categoryId;
     }
 
-    public HashMap<String, String> getName() {
+    public Map<String, String> getName() {
         return name;
     }
 
-    public void setName(HashMap<String, String> name) {
+    public void setName(Map<String, String> name) {
         this.name = name;
     }
 

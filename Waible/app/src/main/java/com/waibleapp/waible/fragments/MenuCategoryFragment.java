@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.waibleapp.waible.R;
@@ -41,6 +42,10 @@ public class MenuCategoryFragment extends Fragment implements OnUpdateUIListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menu_category, container, false);
+
+        ImageView menuCategoryImageView = (ImageView) view.findViewById(R.id.menu_category_image_view);
+        menuCategoryImageView.setImageResource(R.drawable.breakfast);
+
         return view;
     }
 

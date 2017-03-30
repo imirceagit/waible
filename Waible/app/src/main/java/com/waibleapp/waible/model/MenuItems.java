@@ -16,19 +16,19 @@ public class MenuItems {
 
     @Exclude
     private String menuItemId;
-    private HashMap<String, String> name;
+    private Map<String, String> name;
     private double price;
 
     public MenuItems() {
     }
 
-    public MenuItems(HashMap<String, String> name, double price) {
+    public MenuItems(Map<String, String> name, double price) {
         this.menuItemId = FirebaseDatabase.getInstance().getReference().push().getKey();
         this.name = name;
         this.price = price;
     }
 
-    public MenuItems(String menuItemId, HashMap<String, String> name, double price) {
+    public MenuItems(String menuItemId, Map<String, String> name, double price) {
         this.menuItemId = menuItemId;
         this.name = name;
         this.price = price;
@@ -42,11 +42,11 @@ public class MenuItems {
         this.menuItemId = menuItemId;
     }
 
-    public HashMap<String, String> getName() {
+    public Map<String, String> getName() {
         return name;
     }
 
-    public void setName(HashMap<String, String> name) {
+    public void setName(Map<String, String> name) {
         this.name = name;
     }
 

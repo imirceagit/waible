@@ -3,9 +3,11 @@ package com.waibleapp.waible.model;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by mircea.ionita on 3/30/2017.
@@ -14,24 +16,33 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class RestaurantMenu {
 
-    private List<MenuCategory> categories;
+    private HashMap<String, MenuCategory> categories;
     private String defaultLanguage;
     private HashMap<String, Boolean> languages;
 
     public RestaurantMenu() {
     }
 
-    public RestaurantMenu(List<MenuCategory> categories, String defaultLanguage, HashMap<String, Boolean> languages) {
+    public RestaurantMenu(HashMap<String, MenuCategory> categories, String defaultLanguage, HashMap<String, Boolean> languages) {
         this.categories = categories;
         this.defaultLanguage = defaultLanguage;
         this.languages = languages;
     }
 
-    public List<MenuCategory> getCategories() {
+    public List<MenuCategory> getCategoriesAsList(){
+        List<MenuCategory> list = new ArrayList<>();
+        Set<String> keySet = categories.keySet();
+        for (String s : keySet){
+            list.add(categories.get(s));
+        }
+        return list;
+    }
+
+    public HashMap<String, MenuCategory> getCategories() {
         return categories;
     }
 
-    public void setCategories(List<MenuCategory> categories) {
+    public void setCategories(HashMap<String, MenuCategory> categories) {
         this.categories = categories;
     }
 
