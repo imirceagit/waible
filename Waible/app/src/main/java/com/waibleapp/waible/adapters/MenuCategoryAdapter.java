@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.waibleapp.waible.R;
 import com.waibleapp.waible.holders.MenuCategoryViewHolder;
+import com.waibleapp.waible.listeners.OnMenuItemInteractionListener;
 import com.waibleapp.waible.model.MenuCategory;
 
 import java.util.List;
@@ -17,8 +18,7 @@ import java.util.List;
 
 public class MenuCategoryAdapter extends RecyclerView.Adapter<MenuCategoryViewHolder> {
 
-    private List<OnMenuItemInteractionListener> mListeners;
-
+    private OnMenuItemInteractionListener menuItemInteractionListener;
     private List<MenuCategory> menuCategories;
 
     public MenuCategoryAdapter(List<MenuCategory> menuCategories) {
@@ -32,30 +32,30 @@ public class MenuCategoryAdapter extends RecyclerView.Adapter<MenuCategoryViewHo
     }
 
     @Override
-    public void onBindViewHolder(MenuCategoryViewHolder holder, int position) {
+    public void onBindViewHolder(MenuCategoryViewHolder holder, final int position) {
         final MenuCategory menuCategory = menuCategories.get(position);
         final int currentPosition = position;
         holder.updateUI(menuCategory);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (OnMenuItemInteractionListener listener : mListeners){
-                    listener.onMenuItemInteraction(menuCategory, currentPosition);
+                if (menuItemInteractionListener != null){
+                    menuItemInteractionListener.onMenuItemInteraction(menuCategory, position);
                 }
             }
         });
     }
 
+    public void addMenuItemInteractionListener(OnMenuItemInteractionListener listener){
+        menuItemInteractionListener = listener;
+    }
+
+    public void removeMenuItemInteractionListener(){
+        menuItemInteractionListener = null;
+    }
+
     @Override
     public int getItemCount() {
         return menuCategories.size();
-    }
-
-    public void addOnMenuItemInteractionListener(OnMenuItemInteractionListener listener){
-        mListeners.add(listener);
-    }
-
-    public interface OnMenuItemInteractionListener {
-        void onMenuItemInteraction(MenuCategory menuCategory, int position);
     }
 }

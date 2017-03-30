@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.waibleapp.waible.R;
+import com.waibleapp.waible.activities.AuthActivity;
 import com.waibleapp.waible.activities.MainActivity;
 
 public class AuthFragment extends Fragment {
@@ -29,7 +30,7 @@ public class AuthFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
+        ActionBar actionBar = ((AuthActivity) getActivity()).getSupportActionBar();
         if (actionBar != null && actionBar.isShowing()){
             actionBar.hide();
         }
@@ -60,7 +61,7 @@ public class AuthFragment extends Fragment {
 
     private void onLoginButtonPressed(String email, String password) {
         if (mListener != null) {
-            mListener.onAuthFragmentInteraction(email, password);
+            mListener.onLoginButtonPressed(email, password);
         }
     }
 
@@ -92,6 +93,7 @@ public class AuthFragment extends Fragment {
     }
 
     public interface OnAuthFragmentInteractionListener {
-        void onAuthFragmentInteraction(String email, String password);
+        void onLoginButtonPressed(String email, String password);
+        void onGoToRegisterButtonPressed();
     }
 }

@@ -12,32 +12,34 @@ import java.util.Map;
  */
 
 @IgnoreExtraProperties
-public class MenuCategory {
+public class MenuItems {
 
     @Exclude
-    private String categoryId;
+    private String menuItemId;
     private HashMap<String, String> name;
-    private int total;
+    private double price;
 
-    public MenuCategory() {
+    public MenuItems() {
     }
 
-    public MenuCategory(HashMap<String, String> name) {
-        this.categoryId = FirebaseDatabase.getInstance().getReference().push().getKey();
+    public MenuItems(HashMap<String, String> name, double price) {
+        this.menuItemId = FirebaseDatabase.getInstance().getReference().push().getKey();
         this.name = name;
+        this.price = price;
     }
 
-    public MenuCategory(String categoryId, HashMap<String, String> name) {
-        this.categoryId = categoryId;
+    public MenuItems(String menuItemId, HashMap<String, String> name, double price) {
+        this.menuItemId = menuItemId;
         this.name = name;
+        this.price = price;
     }
 
-    public String getCategoryId() {
-        return categoryId;
+    public String getMenuItemId() {
+        return menuItemId;
     }
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    public void setMenuItemId(String menuItemId) {
+        this.menuItemId = menuItemId;
     }
 
     public HashMap<String, String> getName() {
@@ -48,28 +50,28 @@ public class MenuCategory {
         this.name = name;
     }
 
-    public int getTotal() {
-        return total;
+    public double getPrice() {
+        return price;
     }
 
-    public void setTotal(int total) {
-        this.total = total;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     @Exclude
     public Map<String, Object> getFirebaseMap(){
         Map<String, Object> result = new HashMap<>();
         result.put("name", name);
-        result.put("total", total);
+        result.put("price", price);
         return result;
     }
 
     @Override
     public String toString() {
-        return "MenuCategory{" +
-                "categoryId='" + categoryId + '\'' +
+        return "MenuItems{" +
+                "menuItemId='" + menuItemId + '\'' +
                 ", name=" + name +
-                ", total=" + total +
+                ", price=" + price +
                 '}';
     }
 }

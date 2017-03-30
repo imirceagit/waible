@@ -7,10 +7,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseUser;
 import com.waibleapp.waible.R;
 import com.waibleapp.waible.activities.MainActivity;
-import com.waibleapp.waible.model.LoginEntity;
 
 /**
  * Created by mircea.ionita on 3/29/2017.
@@ -20,13 +18,19 @@ public class LoginHandler {
 
     private final String TAG = "LoginHandler";
 
+    private static LoginHandler instance;
+
     private FirebaseAuth mAuth;
 
-    private LoginEntity loginEntity;
-
-    public LoginHandler() {
+    private LoginHandler() {
         mAuth = FirebaseAuth.getInstance();
-        this.loginEntity = MainActivity.loginEntity;
+    }
+
+    public static LoginHandler getInstance(){
+        if (instance == null){
+            instance = new LoginHandler();
+        }
+        return instance;
     }
 
     public void createUserWithEmailAndPassword(String email, String password){

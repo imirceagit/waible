@@ -11,46 +11,36 @@ import java.util.Map;
  */
 
 @IgnoreExtraProperties
-public class User {
+public class PriceTier {
 
-    @Exclude
-    private String uid;
-    private String name;
+    private boolean hasMenu;
 
-    public User() {
+    public PriceTier() {
     }
 
-    public User(String name) {
-        this.name = name;
+    public PriceTier(boolean hasMenu) {
+        this.hasMenu = hasMenu;
     }
 
-    public String getUid() {
-        return uid;
+    public boolean isHasMenu() {
+        return hasMenu;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setHasMenu(boolean hasMenu) {
+        this.hasMenu = hasMenu;
     }
 
     @Exclude
     public Map<String, Object> getFirebaseMap(){
         Map<String, Object> result = new HashMap<>();
-        result.put("name", name);
+        result.put("hasMenu", hasMenu);
         return result;
     }
 
     @Override
     public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
+        return "PriceTier{" +
+                "hasMenu=" + hasMenu +
                 '}';
     }
 }

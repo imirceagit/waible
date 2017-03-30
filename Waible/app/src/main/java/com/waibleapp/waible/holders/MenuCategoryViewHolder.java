@@ -7,7 +7,9 @@ import android.widget.TextView;
 
 import com.waibleapp.waible.R;
 import com.waibleapp.waible.activities.MainActivity;
+import com.waibleapp.waible.model.Localization;
 import com.waibleapp.waible.model.MenuCategory;
+import com.waibleapp.waible.model.SessionEntity;
 
 /**
  * Created by mircea.ionita on 3/29/2017.
@@ -28,8 +30,9 @@ public class MenuCategoryViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void updateUI(MenuCategory menuCategory){
-        cardMenuCategory.setBackgroundResource(MainActivity.mainActivity.getResources().getIdentifier(menuCategory.getImage(), "drawable", MainActivity.mainActivity.getPackageName()));
-        cardMenuCategoryName.setText(menuCategory.getName());
-        cardMenuCategoryNoItems.setText(String.valueOf(menuCategory.getNoItems()));
+        cardMenuCategory.setBackgroundResource(MainActivity.mainActivity.getResources().getIdentifier("breakfast", "drawable", MainActivity.mainActivity.getPackageName()));
+        cardMenuCategoryName.setText(menuCategory.getName().get(Localization.defaultLanguage));
+        // TODO NUMBER OF ITEMS
+        cardMenuCategoryNoItems.setText(String.valueOf(1));
     }
 }

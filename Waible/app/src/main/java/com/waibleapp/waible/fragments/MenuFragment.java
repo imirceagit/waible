@@ -2,7 +2,6 @@ package com.waibleapp.waible.fragments;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -15,17 +14,27 @@ import android.view.ViewGroup;
 import com.waibleapp.waible.R;
 import com.waibleapp.waible.activities.MainActivity;
 import com.waibleapp.waible.adapters.MenuCategoryAdapter;
+import com.waibleapp.waible.listeners.OnCompleteCallback;
+import com.waibleapp.waible.listeners.OnMenuItemInteractionListener;
+import com.waibleapp.waible.listeners.OnUpdateUIListener;
 import com.waibleapp.waible.model.MenuCategory;
+import com.waibleapp.waible.model.RestaurantMenu;
+import com.waibleapp.waible.model.SessionEntity;
+import com.waibleapp.waible.services.DatabaseService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MenuFragment extends Fragment {
+public class MenuFragment extends Fragment implements OnUpdateUIListener {
 
     private final String TAG = "MenuFragment";
     private OnMenuFragmentInteractionListener mListener;
 
+    private DatabaseService databaseService;
     private MenuCategoryAdapter menuCategoryAdapter;
+    private SessionEntity sessionEntity;
+
+    private RestaurantMenu restaurantMenu;
 
     public MenuFragment() {
     }
@@ -33,6 +42,8 @@ public class MenuFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sessionEntity = SessionEntity.getInstance();
+        databaseService = DatabaseService.getInstance();
         ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
         if (actionBar != null && !actionBar.isShowing()){
             actionBar.show();
@@ -45,16 +56,27 @@ public class MenuFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
 
-        List<MenuCategory> menuCategoryList = new ArrayList<>();
+        databaseService.getMenuForRestaurant(sessionEntity.getRestaurant().getRestaurantId(), new OnCompleteCallback() {
+            @Override
+            public void onCompleteSuccessCallback(Object result) {
+                restaurantMenu = (RestaurantMenu) result;
+                menuCategoryAdapter.notifyDataSetChanged();
+            }
 
-        menuCategoryList.add(new MenuCategory("Breakfast", 10, "breakfast"));
-        menuCategoryList.add(new MenuCategory("Grill", 8, "grill"));
-        menuCategoryList.add(new MenuCategory("Breakfast", 10, "breakfast"));
-        menuCategoryList.add(new MenuCategory("Grill", 8, "grill"));
-        menuCategoryList.add(new MenuCategory("Breakfast", 10, "breakfast"));
-        menuCategoryList.add(new MenuCategory("Grill", 8, "grill"));
+            @Override
+            public void onCompleteErrorCallback(String result) {
+                MainActivity.makeToast(result);
+            }
+        });
 
-        menuCategoryAdapter = new MenuCategoryAdapter(menuCategoryList);
+        menuCategoryAdapter = new MenuCategoryAdapter(restaurantMenu.getCategories());
+        menuCategoryAdapter.addMenuItemInteractionListener(new OnMenuItemInteractionListener() {
+            @Override
+            public void onMenuItemInteraction(MenuCategory menuCategory, int position) {
+                onItemSelected(menuCategory, position);
+            }
+        });
+
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_menu_category);
         recyclerView.hasFixedSize();
         recyclerView.addItemDecoration(new VerticalSpaceItemDecorator(1));
@@ -67,15 +89,20 @@ public class MenuFragment extends Fragment {
         return view;
     }
 
-    public void onButtonPressed(Uri uri) {
+    private void updateUI(){
+
+    }
+
+    public void onItemSelected(MenuCategory menuCategory, int position) {
         if (mListener != null) {
-            mListener.onMenuFragmentInteraction(uri);
+            mListener.onMenuFragmentInteraction(menuCategory, position);
         }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        MainActivity.mainActivity.addOnUpdateUIListeners(this);
         if (context instanceof OnMenuFragmentInteractionListener) {
             mListener = (OnMenuFragmentInteractionListener) context;
         } else {
@@ -87,11 +114,17 @@ public class MenuFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        MainActivity.mainActivity.removeOnUpdateUIListeners(this);
         mListener = null;
     }
 
+    @Override
+    public void onUpdateUIListener() {
+        updateUI();
+    }
+
     public interface OnMenuFragmentInteractionListener {
-        void onMenuFragmentInteraction(Uri uri);
+        void onMenuFragmentInteraction(MenuCategory menuCategory, int position);
     }
 }
 
