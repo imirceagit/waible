@@ -23,6 +23,7 @@ public class AuthFragment extends Fragment {
     private final String TAG = "AuthFragment";
 
     private OnAuthFragmentInteractionListener mListener;
+    ActionBar actionBar;
 
     public AuthFragment() {
     }
@@ -30,16 +31,17 @@ public class AuthFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActionBar actionBar = ((AuthActivity) getActivity()).getSupportActionBar();
-        if (actionBar != null && actionBar.isShowing()){
-            actionBar.hide();
-        }
+        actionBar = ((AuthActivity) getActivity()).getSupportActionBar();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_auth, container, false);
+
+        if (actionBar != null && actionBar.isShowing()){
+            actionBar.hide();
+        }
 
         final EditText authEmailEditText = (EditText) view.findViewById(R.id.auth_email_edit_text);
         final EditText authPasswordEditText = (EditText) view.findViewById(R.id.auth_password_edit_text);
@@ -82,7 +84,7 @@ public class AuthFragment extends Fragment {
             mListener = (OnAuthFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnAuthFragmentInteractionListener");
         }
     }
 

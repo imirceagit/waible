@@ -18,6 +18,7 @@ public class RegisterFragment extends Fragment {
     private final String TAG = "RegisterFragment";
 
     private OnRegisterFragmentInteractionListener mListener;
+    ActionBar actionBar;
 
     public RegisterFragment() {
     }
@@ -25,10 +26,7 @@ public class RegisterFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActionBar actionBar = ((AuthActivity) getActivity()).getSupportActionBar();
-        if (actionBar != null && actionBar.isShowing()){
-            actionBar.hide();
-        }
+        actionBar = ((AuthActivity) getActivity()).getSupportActionBar();
         if (getArguments() != null) {
 
         }
@@ -38,6 +36,11 @@ public class RegisterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_register, container, false);
+
+        if (actionBar != null && actionBar.isShowing()){
+            actionBar.hide();
+        }
+
         return view;
     }
 

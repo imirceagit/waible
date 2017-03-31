@@ -6,5 +6,5 @@ package com.waibleapp.waible.model;
 
 public class Localization {
 
-    public static String defaultLanguage = "eu";
+    public static String defaultLanguage = "en";
 }

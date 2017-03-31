@@ -72,7 +72,7 @@
         android:textColor="@color/colorWhite"/>
 
     <RelativeLayout
-        android:id="@+id/loading_panel"
+        android:id="@+id/main_fragment_loading_panel"
         android:layout_width="168dp"
         android:layout_height="64dp"
         android:gravity="center"

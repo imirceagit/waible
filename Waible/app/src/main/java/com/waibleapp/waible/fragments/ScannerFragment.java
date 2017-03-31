@@ -2,7 +2,6 @@ package com.waibleapp.waible.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -55,21 +54,23 @@ public class ScannerFragment extends Fragment {
         IntentIntegrator.forSupportFragment(this).initiateScan();
     }
 
-    public void onScanComplete() {
-        if (mListener != null) {
-            mListener.onScannerFragmentInteraction();
+    public void onScanComplete(String restaurantId) {
+        if (sessionEntity.isScanned()) {
+            if (mListener != null) {
+                mListener.onScannerFragmentInteraction(restaurantId);
+            }
         }
     }
 
-    private void processScan(String scan){
-        String path = scan;
-        path = path.replace("http://waibleapp.com/restaurants/", "");
+    private void processBarcodeCode(String scan){
+        if (scan.startsWith("http://waibleapp.com/restaurants/")){
+            sessionEntity.setScanned(true);
+        }
+        String path = scan.replace("http://waibleapp.com/restaurants/", "");
         String[] uri = path.split("/");
-        sessionEntity.setRestaurantUserId(uri[0]);
-        Restaurant restaurant = new Restaurant(uri[1]);
-        sessionEntity.setRestaurant(restaurant);
+        sessionEntity.setRestaurantAdminId(uri[0]);
         sessionEntity.setTableNo(uri[2]);
-        onScanComplete();
+        onScanComplete(uri[1]);
     }
 
     @Override
@@ -81,8 +82,7 @@ public class ScannerFragment extends Fragment {
             if(scannerResult == null) {
                 Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_LONG).show();
             }else {
-                sessionEntity.setScanned(true);
-                processScan(scannerResult);
+                processBarcodeCode(scannerResult);
             }
         }
     }
@@ -105,6 +105,6 @@ public class ScannerFragment extends Fragment {
     }
 
     public interface OnScannerFragmentInteractionListener {
-        void onScannerFragmentInteraction();
+        void onScannerFragmentInteraction(String restaurantId);
     }
 }

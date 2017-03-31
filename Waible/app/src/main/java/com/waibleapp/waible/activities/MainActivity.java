@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -16,18 +15,14 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 import com.waibleapp.waible.R;
 import com.waibleapp.waible.fragments.MainFragment;
 import com.waibleapp.waible.fragments.MenuCategoryFragment;
 import com.waibleapp.waible.fragments.MenuFragment;
-import com.waibleapp.waible.fragments.RegisterFragment;
 import com.waibleapp.waible.fragments.ScannerFragment;
 import com.waibleapp.waible.model.Constants;
 import com.waibleapp.waible.listeners.OnUpdateUIListener;
 import com.waibleapp.waible.model.MenuCategory;
-import com.waibleapp.waible.model.Restaurant;
 import com.waibleapp.waible.model.SessionEntity;
 import com.waibleapp.waible.model.User;
 import com.waibleapp.waible.services.LoginHandler;
@@ -40,8 +35,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
 
     private final String TAG = "MainActivity";
 
-    public static MainActivity mainActivity;
-
     private List<OnUpdateUIListener> onUpdateUIListeners;
 
     private FirebaseAuth mAuth;
@@ -49,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
     private LoginHandler loginHandler;
 
     private FragmentManager fragmentManager;
-    private MainFragment mainFragment;
     private Gson gson;
 
     private SessionEntity sessionEntity;
@@ -58,14 +50,12 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mainActivity = this;
 
         sessionEntity = SessionEntity.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        loginHandler = LoginHandler.getInstance();
+        loginHandler = LoginHandler.getInstance(this);
         gson = new Gson();
         onUpdateUIListeners = new ArrayList<>();
-        mainFragment = new MainFragment();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -74,11 +64,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
         Fragment fragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
 
         if(fragment == null){
-            if (sessionEntity.isScanned()){
-                fragment = mainFragment;
-            }else {
-                fragment = new ScannerFragment();
-            }
+            fragment = new ScannerFragment();
             fragmentManager.beginTransaction().add(R.id.main_fragment_container, fragment).commit();
         }
 
@@ -103,16 +89,17 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
         finish();
     }
 
-    private void openRegisterFragment(){
-        fragmentManager.beginTransaction().replace(R.id.main_fragment_container, new RegisterFragment()).commit();
-    }
-
-    private void openMainFragment(){
-        fragmentManager.beginTransaction().replace(R.id.main_fragment_container, mainFragment).commit();
+    private void openMainFragment(String restaurantId){
+        MainFragment fragment = new MainFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.MainBundleParams.restaurantIdParam, restaurantId);
+        fragment.setArguments(bundle);
+        fragmentManager.beginTransaction().replace(R.id.main_fragment_container, fragment).commit();
     }
 
     private void openMenuFragment(){
-        fragmentManager.beginTransaction().replace(R.id.main_fragment_container, new MenuFragment()).addToBackStack(null).commit();
+        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                .replace(R.id.main_fragment_container, new MenuFragment()).addToBackStack(null).commit();
     }
 
     private void openMenuCategoryFragment(MenuCategory menuCategory, int position){
@@ -121,7 +108,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
         bundle.putSerializable(Constants.MenuCategoryBundleParams.menuCategoryParam, gson.toJson(menuCategory));
         bundle.putInt(Constants.MenuCategoryBundleParams.positionParam, position);
         fragment.setArguments(bundle);
-        fragmentManager.beginTransaction().replace(R.id.main_fragment_container, fragment).addToBackStack(null).commit();
+        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                .replace(R.id.main_fragment_container, fragment).addToBackStack(null).commit();
     }
 
     private void openScannerFragment(){
@@ -139,14 +127,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
             user.setUid(uid);
             sessionEntity.setUser(user);
         }
-    }
-
-    public static void makeToast(int resId){
-        Toast.makeText(mainActivity, resId, Toast.LENGTH_SHORT).show();
-    }
-
-    public static void makeToast(String message){
-        Toast.makeText(mainActivity, message, Toast.LENGTH_SHORT).show();
     }
 
     private void updateUI(){
@@ -220,8 +200,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
     }
 
     @Override
-    public void onScannerFragmentInteraction() {
-        openMainFragment();
+    public void onScannerFragmentInteraction(String restaurantId) {
+        openMainFragment(restaurantId);
     }
 
     @Override

@@ -16,7 +16,7 @@ public class SessionEntity {
 
     private String sessionId;
     private User user;
-    private String restaurantUserId;
+    private String restaurantAdminId;
     private Restaurant restaurant;
     private String tableNo;
     private boolean restaurantLoaded;
@@ -35,11 +35,6 @@ public class SessionEntity {
         return instance;
     }
 
-    public String getRestaurantPath(){
-        String path = "/restaurants/" + restaurantUserId + "/" + restaurant.getRestaurantId() + "/";
-        return path;
-    }
-
     public String getSessionId() {
         return sessionId;
     }
@@ -56,12 +51,12 @@ public class SessionEntity {
         this.user = user;
     }
 
-    public String getRestaurantUserId() {
-        return restaurantUserId;
+    public String getRestaurantAdminId() {
+        return restaurantAdminId;
     }
 
-    public void setRestaurantUserId(String restaurantUserId) {
-        this.restaurantUserId = restaurantUserId;
+    public void setRestaurantAdminId(String restaurantUserId) {
+        this.restaurantAdminId = restaurantUserId;
     }
 
     public Restaurant getRestaurant() {

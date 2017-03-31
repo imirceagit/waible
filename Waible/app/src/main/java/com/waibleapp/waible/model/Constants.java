@@ -19,6 +19,7 @@ public class Constants {
     }
 
     public interface MainBundleParams{
+        String restaurantIdParam = "com.waibleapp.MainFragment.restaurantIdParam";
     }
 
     public interface AuthBundleParams{

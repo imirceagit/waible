@@ -17,6 +17,7 @@
     <string name="get_check_button">Get the Check</string>
 
     <string name="no_items_unit">pcs</string>
+    <string name="price_unit">ron</string>
 
     <!-- TOASTS -->
     <string name="auth_failed">Authentication failed</string>

@@ -11,23 +11,26 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.waibleapp.waible.R;
 import com.waibleapp.waible.activities.MainActivity;
 import com.waibleapp.waible.adapters.MenuCategoryAdapter;
 import com.waibleapp.waible.listeners.OnCompleteCallback;
-import com.waibleapp.waible.listeners.OnMenuItemInteractionListener;
 import com.waibleapp.waible.listeners.OnUpdateUIListener;
+import com.waibleapp.waible.listeners.RecyclerItemClickListener;
 import com.waibleapp.waible.model.MenuCategory;
 import com.waibleapp.waible.model.RestaurantMenu;
 import com.waibleapp.waible.model.SessionEntity;
 import com.waibleapp.waible.services.DatabaseService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MenuFragment extends Fragment implements OnUpdateUIListener {
 
@@ -36,10 +39,17 @@ public class MenuFragment extends Fragment implements OnUpdateUIListener {
 
     private DatabaseService databaseService;
     private MenuCategoryAdapter menuCategoryAdapter;
+    private LinearLayoutManager linearLayoutManager;
+    private RecyclerView recyclerView;
     private SessionEntity sessionEntity;
 
     private List<MenuCategory> menuCategories;
     private RestaurantMenu restaurantMenu;
+    private ActionBar actionBar;
+
+    private RelativeLayout menuFragmentLoadingPanel;
+
+    private boolean isLoading = true;
 
     public MenuFragment() {
     }
@@ -50,11 +60,7 @@ public class MenuFragment extends Fragment implements OnUpdateUIListener {
         sessionEntity = SessionEntity.getInstance();
         databaseService = DatabaseService.getInstance();
         menuCategories = new ArrayList<>();
-        ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
-        if (actionBar != null && !actionBar.isShowing()){
-            actionBar.show();
-            actionBar.setTitle("LA MAMA");
-        }
+        actionBar = ((MainActivity) getActivity()).getSupportActionBar();
     }
 
     @Override
@@ -62,55 +68,78 @@ public class MenuFragment extends Fragment implements OnUpdateUIListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
 
+        if (actionBar != null && !actionBar.isShowing()){
+            actionBar.setDefaultDisplayHomeAsUpEnabled(true);
+            actionBar.show();
+        }
+
+        menuFragmentLoadingPanel = (RelativeLayout) view.findViewById(R.id.menu_fragment_loading_panel);
+
         HashMap<String, MenuCategory> map = new HashMap<>();
-        HashMap<String, String> names = new HashMap<String, String>();
-        names.put("eu", "Soups");
-        map.put("dasddas", new MenuCategory(names, 8));
         restaurantMenu = new RestaurantMenu();
         restaurantMenu.setCategories(map);
 
-        databaseService.getMenuForRestaurant(sessionEntity.getRestaurant().getRestaurantId(), new OnCompleteCallback() {
+        databaseService.getMenuCategoriesForRestaurant(sessionEntity.getRestaurant().getRestaurantId(), new OnCompleteCallback() {
             @Override
             public void onCompleteSuccessCallback(Object result) {
                 restaurantMenu = (RestaurantMenu) result;
+                isLoading = false;
                 updateUI();
             }
 
             @Override
             public void onCompleteErrorCallback(String result) {
-                MainActivity.makeToast(result);
+                isLoading = false;
+                Toast.makeText(getContext(), result, Toast.LENGTH_SHORT).show();
+                updateUI();
             }
         });
 
-        menuCategories = restaurantMenu.getCategoriesAsList();
-        menuCategoryAdapter = new MenuCategoryAdapter(menuCategories);
-        menuCategoryAdapter.addMenuItemInteractionListener(new OnMenuItemInteractionListener() {
+        menuCategories = restaurantMenu.getCategoriesAsList(menuCategories);
+        menuCategoryAdapter = new MenuCategoryAdapter(menuCategories, getContext());
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_menu_category);
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener(){
             @Override
-            public void onMenuItemInteraction(MenuCategory menuCategory, int position) {
-                onItemSelected(menuCategory, position);
+            public void onItemClick(View view, int position) {
+                onItemSelected(menuCategories.get(position), position);
             }
-        });
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_menu_category);
+            @Override
+            public void onLongItemClick(View view, int position) {
+
+            }
+        }));
         recyclerView.hasFixedSize();
         recyclerView.addItemDecoration(new VerticalSpaceItemDecorator(1));
         recyclerView.setAdapter(menuCategoryAdapter);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
 
+        updateUI();
         return view;
     }
 
     private void updateUI(){
-        Log.v(TAG, "PREV == UPDATE ===== " + menuCategories);
-        menuCategories = restaurantMenu.getCategoriesAsList();
-        Log.v(TAG, "UPDATE ===== " + menuCategories);
+        if (isLoading){
+            menuFragmentLoadingPanel.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }else {
+            menuFragmentLoadingPanel.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
+        menuCategories = restaurantMenu.getCategoriesAsList(menuCategories);
         menuCategoryAdapter.notifyDataSetChanged();
     }
 
     public void onItemSelected(MenuCategory menuCategory, int position) {
+        Log.v(TAG, String.valueOf(position));
+        linearLayoutManager.scrollToPositionWithOffset(position, 0);
+//        for (MenuCategory m : menuCategories){
+//
+//        }
         if (mListener != null) {
             mListener.onMenuFragmentInteraction(menuCategory, position);
         }
@@ -119,7 +148,7 @@ public class MenuFragment extends Fragment implements OnUpdateUIListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        MainActivity.mainActivity.addOnUpdateUIListeners(this);
+        ((MainActivity) getActivity()).addOnUpdateUIListeners(this);
         if (context instanceof OnMenuFragmentInteractionListener) {
             mListener = (OnMenuFragmentInteractionListener) context;
         } else {
@@ -131,7 +160,7 @@ public class MenuFragment extends Fragment implements OnUpdateUIListener {
     @Override
     public void onDetach() {
         super.onDetach();
-        MainActivity.mainActivity.removeOnUpdateUIListeners(this);
+        ((MainActivity) getActivity()).removeOnUpdateUIListeners(this);
         mListener = null;
     }
 

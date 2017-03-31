@@ -1,6 +1,8 @@
 package com.waibleapp.waible.services;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -20,16 +22,18 @@ public class LoginHandler {
     private final String TAG = "LoginHandler";
 
     private static LoginHandler instance;
+    private Context context;
 
     private FirebaseAuth mAuth;
 
-    private LoginHandler() {
+    private LoginHandler(Context context) {
+        this.context = context;
         mAuth = FirebaseAuth.getInstance();
     }
 
-    public static LoginHandler getInstance(){
+    public static LoginHandler getInstance(Context context){
         if (instance == null){
-            instance = new LoginHandler();
+            instance = new LoginHandler(context);
         }
         return instance;
     }
@@ -42,7 +46,7 @@ public class LoginHandler {
                     callback.onCompleteSuccessCallback(new Object());
                 }else {
                     if (task.getException() instanceof FirebaseAuthUserCollisionException){
-                        MainActivity.makeToast(R.string.auth_user_already_exists);
+                        Toast.makeText(context, R.string.auth_user_already_exists, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -56,7 +60,7 @@ public class LoginHandler {
                 if (task.isSuccessful()){
                     callback.onCompleteSuccessCallback(new Object());
                 }else {
-                    MainActivity.makeToast(R.string.auth_failed);
+                    Toast.makeText(context, R.string.auth_failed, Toast.LENGTH_SHORT).show();
                 }
             }
         });

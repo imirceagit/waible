@@ -4,6 +4,8 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +31,26 @@ public class RestaurantMenu {
         this.languages = languages;
     }
 
-    public List<MenuCategory> getCategoriesAsList(){
-        List<MenuCategory> list = new ArrayList<>();
+    public List<MenuCategory> getCategoriesAsList(List<MenuCategory> list){
+        list.clear();
         Set<String> keySet = categories.keySet();
         for (String s : keySet){
             list.add(categories.get(s));
         }
+        Collections.sort(list, new Comparator<MenuCategory>() {
+            @Override
+            public int compare(MenuCategory menuCategory, MenuCategory t1) {
+                return menuCategory.getName().get(Localization.defaultLanguage).compareTo(t1.getName().get(Localization.defaultLanguage));
+            }
+        });
         return list;
+    }
+
+    public void setCategoriesId(){
+        Set<String> keySet = categories.keySet();
+        for (String s : keySet){
+            categories.get(s).setCategoryId(s);
+        }
     }
 
     public HashMap<String, MenuCategory> getCategories() {

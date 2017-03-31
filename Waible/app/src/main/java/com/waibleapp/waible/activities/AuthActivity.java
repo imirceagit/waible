@@ -34,7 +34,7 @@ public class AuthActivity extends AppCompatActivity implements AuthFragment.OnAu
         setContentView(R.layout.activity_auth);
 
         mAuth = FirebaseAuth.getInstance();
-        loginHandler = LoginHandler.getInstance();
+        loginHandler = LoginHandler.getInstance(this);
 
         fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.auth_fragment_container);
