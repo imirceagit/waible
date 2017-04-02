@@ -1,98 +1,72 @@
 package com.waibleapp.waible.services;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.waibleapp.waible.activities.MainActivity;
-import com.waibleapp.waible.model.User;
 import com.waibleapp.waible.R;
+import com.waibleapp.waible.activities.MainActivity;
+import com.waibleapp.waible.listeners.OnCompleteCallback;
 
 /**
- * Created by mircea.ionita on 3/28/2017.
+ * Created by mircea.ionita on 3/29/2017.
  */
 
 public class LoginHandler {
 
-    private final String LOG_TAG = "LoginHandler";
+    private final String TAG = "LoginHandler";
 
     private static LoginHandler instance;
-
-    private User loggedUser;
-    private boolean firstLogin = false;
+    private Context context;
 
     private FirebaseAuth mAuth;
 
-    public static LoginHandler getInstance(){
+    private LoginHandler(Context context) {
+        this.context = context;
+        mAuth = FirebaseAuth.getInstance();
+    }
+
+    public static LoginHandler getInstance(Context context){
         if (instance == null){
-            instance = new LoginHandler();
+            instance = new LoginHandler(context);
         }
         return instance;
     }
 
-    private LoginHandler() {
-        loggedUser = new User();
-        mAuth = FirebaseAuth.getInstance();
-    }
-
-    public User getLoggedUser() {
-        return loggedUser;
-    }
-
-    public void setLoggedUser(User loggedUser) {
-        this.loggedUser = loggedUser;
-    }
-
-    public void clearLoggedUser(){
-        loggedUser = new User();
-    }
-
-    public void createUserWithEmailAndPassword(String name, String email, String password){
-        User user = loggedUser;
-        user.setName(name);
-        setLoggedUser(user);
+    public void createUserWithEmailAndPassword(String email, String password, final OnCompleteCallback callback){
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!task.isSuccessful()) {
-                    firstLogin = false;
-                    if (task.getException() instanceof FirebaseAuthUserCollisionException){
-                        MainActivity.shortMessage(R.string.user_already_exist);
-                    }else {
-                        MainActivity.shortMessage(R.string.auth_failed);
-                    }
+                if (task.isSuccessful()){
+                    callback.onCompleteSuccessCallback(new Object());
                 }else {
-                    firstLogin = true;
+                    if (task.getException() instanceof FirebaseAuthUserCollisionException){
+                        Toast.makeText(context, R.string.auth_user_already_exists, Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
     }
 
-    public void signInWithEmailAndPassword(String email, String password){
+    public void signInWithEmailAndPassword(String email, String password, final OnCompleteCallback callback){
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!task.isSuccessful()) {
-                    MainActivity.shortMessage(R.string.auth_failed);
+                if (task.isSuccessful()){
+                    callback.onCompleteSuccessCallback(new Object());
+                }else {
+                    Toast.makeText(context, R.string.auth_failed, Toast.LENGTH_SHORT).show();
                 }
-                firstLogin = false;
             }
         });
     }
 
-    public void signOut() {
+    public void signOut(){
         mAuth.signOut();
-    }
-
-    public boolean isFirstLogin() {
-        return firstLogin;
-    }
-
-    public void setFirstLogin(boolean firstLogin) {
-        this.firstLogin = firstLogin;
     }
 }

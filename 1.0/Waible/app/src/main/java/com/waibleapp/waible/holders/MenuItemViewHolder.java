@@ -36,6 +36,6 @@ public class MenuItemViewHolder extends RecyclerView.ViewHolder {
             Picasso.with(context).load(menuItem.getImageURL()).into(cardMenuItemImageView);
         }
         cardMenuItemName.setText(menuItem.getName().get(Localization.defaultLanguage));
-        cardMenuItemPrice.setText(menuItem.getPrice());
+        cardMenuItemPrice.setText(String.valueOf(menuItem.getPrice()));
     }
 }

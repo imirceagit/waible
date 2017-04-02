@@ -2,127 +2,164 @@ package com.waibleapp.waible.activities;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+import com.google.gson.Gson;
 import com.waibleapp.waible.R;
-import com.waibleapp.waible.fragments.AuthFragment;
+import com.waibleapp.waible.fragments.MainFragment;
+import com.waibleapp.waible.fragments.MenuCategoryFragment;
+import com.waibleapp.waible.fragments.MenuFragment;
 import com.waibleapp.waible.fragments.ScannerFragment;
 import com.waibleapp.waible.model.Constants;
+import com.waibleapp.waible.listeners.OnUpdateUIListener;
+import com.waibleapp.waible.model.MenuCategory;
+import com.waibleapp.waible.model.SessionEntity;
 import com.waibleapp.waible.model.User;
-import com.waibleapp.waible.services.DatabaseService;
 import com.waibleapp.waible.services.LoginHandler;
 
-public class MainActivity extends AppCompatActivity implements AuthFragment.OnAuthFragmentInteractionListener, ScannerFragment.OnScannerFragmentInteractionListener{
+import java.util.ArrayList;
+import java.util.List;
 
-    private final String LOG_TAG = "MainActivity";
+public class MainActivity extends AppCompatActivity implements MainFragment.OnMainFragmentInteractionListener, ScannerFragment.OnScannerFragmentInteractionListener,
+        MenuFragment.OnMenuFragmentInteractionListener, MenuCategoryFragment.OnMenuCategoryFragmentInteractionListener{
 
-    public static MainActivity mainActivity;
+    private final String TAG = "MainActivity";
 
-    //FRAGMENTS
-    private FragmentManager fragmentManager;
-    private AuthFragment authFragment;
-    private ScannerFragment scannerFragment;
+    private List<OnUpdateUIListener> onUpdateUIListeners;
 
-    //AUTH
-    private LoginHandler loginHandler;
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener authStateListener;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private LoginHandler loginHandler;
 
-    private DatabaseService databaseService;
+    private FragmentManager fragmentManager;
+    private Gson gson;
+
+    private SessionEntity sessionEntity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mainActivity = this;
 
-        authFragment = AuthFragment.newInstance();
-        scannerFragment = ScannerFragment.newInstance();
+        Log.v(TAG, "################## onCreate ###################");
+
+        sessionEntity = SessionEntity.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        loginHandler = LoginHandler.getInstance(this);
+        gson = new Gson();
+        onUpdateUIListeners = new ArrayList<>();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+        Fragment fragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
 
         if(fragment == null){
-            fragment = authFragment;
-            fragmentManager.beginTransaction().add(R.id.fragment_container, fragment).commit();
+            Log.v(TAG, "################## beginTransaction ###################");
+            fragment = new ScannerFragment();
+            fragmentManager.beginTransaction().add(R.id.main_fragment_container, fragment).commit();
         }
 
-        loginHandler = LoginHandler.getInstance();
-        databaseService = new DatabaseService(loginHandler);
-        mAuth = FirebaseAuth.getInstance();
-
-        authStateListener = new FirebaseAuth.AuthStateListener() {
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    Log.d(LOG_TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    if (loginHandler.isFirstLogin()){
-                        User loggedUser = loginHandler.getLoggedUser();
-                        loggedUser.setUid(user.getUid());
-                        loginHandler.setLoggedUser(loggedUser);
-                        Log.d(LOG_TAG, loginHandler.getLoggedUser().getUid() + " " + loginHandler.getLoggedUser().getName());
-                        databaseService.inserUser(loginHandler.getLoggedUser());
-                    } else {
-                        databaseService.queryUser(user.getUid());
-                    }
-                    openScannerFragment();
-                } else {
-                    // User is signed out
-                    Log.d(LOG_TAG, "onAuthStateChanged:signed_out");
-                    openAuthFragment();
+                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                if (firebaseUser == null){
+                    openAuthActivity();
+                }else {
+                    User user = new User();
+                    user.setUid(firebaseUser.getUid());
+                    sessionEntity.setUser(user);
                 }
             }
         };
+    }
 
+    private void openAuthActivity(){
+        Intent intent = new Intent(this, AuthActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void openMainFragment(String restaurantId){
+        MainFragment fragment = new MainFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.MainBundleParams.restaurantIdParam, restaurantId);
+        fragment.setArguments(bundle);
+        fragmentManager.beginTransaction().replace(R.id.main_fragment_container, fragment).commit();
+    }
+
+    private void openMenuFragment(){
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_fragment_container, new MenuFragment()).addToBackStack(null).commit();
+    }
+
+    private void openMenuCategoryFragment(MenuCategory menuCategory, int position){
+        MenuCategoryFragment fragment = new MenuCategoryFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constants.MenuCategoryBundleParams.menuCategoryParam, gson.toJson(menuCategory));
+        bundle.putInt(Constants.MenuCategoryBundleParams.positionParam, position);
+        fragment.setArguments(bundle);
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_fragment_container, fragment).addToBackStack(null).commit();
     }
 
     private void openScannerFragment(){
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, scannerFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.main_fragment_container, new ScannerFragment()).commit();
     }
 
-    private void openAuthFragment(){
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, authFragment).commit();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if(result != null) {
-            if(result.getContents() == null) {
-                Log.d("MainActivity", "Cancelled scan");
-                scannerFragment.updateResult("CANCELED");
-                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-            } else {
-                Log.d("MainActivity", "Scanned " + result.getContents());
-                scannerFragment.updateResult(result.getContents());
-                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
+    private void setUserToSession(String uid){
+        User user;
+        if (sessionEntity.getUser() == null){
+            user = new User();
+            user.setUid(uid);
+            sessionEntity.setUser(user);
+        }else {
+            user = sessionEntity.getUser();
+            user.setUid(uid);
+            sessionEntity.setUser(user);
         }
     }
 
-    public void updateUI(){
-        scannerFragment.updateUI();
+    private void updateUI(){
+        for (OnUpdateUIListener listener : onUpdateUIListeners){
+            listener.onUpdateUIListener();
+        }
+    }
+
+    public void addOnUpdateUIListeners(OnUpdateUIListener listener){
+        onUpdateUIListeners.add(listener);
+    }
+
+    public void removeOnUpdateUIListeners(OnUpdateUIListener listener){
+        onUpdateUIListeners.remove(listener);
+    }
+
+    private void closeApplication(){
+        sessionEntity.setScanned(false);
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+        homeIntent.addCategory( Intent.CATEGORY_HOME );
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(homeIntent);
+        finish();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -130,43 +167,92 @@ public class MainActivity extends AppCompatActivity implements AuthFragment.OnAu
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.main_menu_sign_out) {
+        if (id == R.id.menu_main_action_settings) {
+            return true;
+        }
+
+        if (id == R.id.menu_main_action_sign_out) {
             loginHandler.signOut();
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
-    public static void shortMessage(int messageId){
-        Toast.makeText(mainActivity, messageId, Toast.LENGTH_SHORT).show();
-    }
-
     @Override
-    public void onStart() {
+    protected void onStart() {
+        Log.v(TAG, "################## onStart ###################");
         super.onStart();
-        mAuth.addAuthStateListener(authStateListener);
+        mAuth.addAuthStateListener(mAuthStateListener);
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        if (authStateListener != null) {
-            mAuth.removeAuthStateListener(authStateListener);
+    protected void onResume() {
+        Log.v(TAG, "################## onResume ###################");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.v(TAG, "################## onPause ###################");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.v(TAG, "################## onStop ###################");
+        if (mAuthStateListener != null) {
+            mAuth.removeAuthStateListener(mAuthStateListener);
         }
+        sessionEntity.setScanned(false);
+//        SessionEntity.resetSession();
+        super.onStop();
     }
 
     @Override
-    public void onAuthFragmentInteractionSignIn(String email, String password) {
-        loginHandler.signInWithEmailAndPassword(email, password);
+    protected void onDestroy() {
+        Log.v(TAG, "################## onDestroy ###################");
+        super.onDestroy();
     }
 
     @Override
-    public void onAuthFragmentInteractionSignUp(String name, String email, String password) {
-        loginHandler.createUserWithEmailAndPassword(name, email, password);
+    public void onBackPressed() {
+        Log.v(TAG, "################## onBackPressed ###################");
+        super.onBackPressed();
     }
 
     @Override
-    public void onScannerFragmentInteraction(Uri uri) {
+    public void onMainFragmentInteractionMenuButton() {
+        openMenuFragment();
+    }
+
+    @Override
+    public void onMainFragmentInteractionWaiterButton() {
+
+    }
+
+    @Override
+    public void onMainFragmentInteractionCheckButton() {
+
+    }
+
+    @Override
+    public void onScannerFragmentInteraction(String restaurantId) {
+        openMainFragment(restaurantId);
+    }
+
+    @Override
+    public void onScannerFragmentCloseAppInteraction() {
+        closeApplication();
+    }
+
+    @Override
+    public void onMenuFragmentInteraction(MenuCategory menuCategory, int position) {
+        openMenuCategoryFragment(menuCategory, position);
+    }
+
+    @Override
+    public void onMenuCategoryFragmentInteraction(Uri uri) {
 
     }
 }

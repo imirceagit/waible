@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.waibleapp.waible.fragments.MenuFragment">
+    tools:context="com.waibleapp.waible.fragments.AuthFragment">
 
     <android.support.constraint.ConstraintLayout
         android:orientation="vertical"
@@ -118,5 +118,4 @@
             android:textAlignment="center"/>
 
     </android.support.constraint.ConstraintLayout>
-
 </FrameLayout>

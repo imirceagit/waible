@@ -2,28 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.waibleapp.waible.fragments.ScannerFragment">
+    tools:context="com.waibleapp.waible.fragments.ScannerFragment"
+    android:background="@color/colorBlack">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal">
-
-        <TextView
-            android:id="@+id/user_name"
-            android:layout_width="match_parent"
-            android:layout_height="50dp" />
-
-        <Button
-            android:id="@+id/scanner_button"
-            android:layout_width="200dp"
-            android:layout_height="50dp"
-            android:text="@string/scanner_button"/>
-
-        <TextView
-            android:id="@+id/scanner_result"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
 </FrameLayout>

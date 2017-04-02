@@ -3,33 +3,35 @@ package com.waibleapp.waible.model;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * Created by mircea.ionita on 3/30/2017.
+ * Created by Mircea-Ionel on 4/2/2017.
  */
 
 @IgnoreExtraProperties
 public class User {
 
     @Exclude
-    private String uid;
+    private String userId;
     private String name;
 
     public User() {
     }
 
-    public User(String name) {
+    public User(String userId) {
+        this.userId = userId;
+    }
+
+    public User(String userId, String name) {
+        this.userId = userId;
         this.name = name;
     }
 
-    public String getUid() {
-        return uid;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getName() {
@@ -40,17 +42,11 @@ public class User {
         this.name = name;
     }
 
-    @Exclude
-    public Map<String, Object> getFirebaseMap(){
-        Map<String, Object> result = new HashMap<>();
-        result.put("name", name);
-        return result;
-    }
-
     @Override
     public String toString() {
         return "User{" +
-                "name='" + name + '\'' +
+                "userId='" + userId + '\'' +
+                ", name='" + name + '\'' +
                 '}';
     }
 }

@@ -1,14 +1,12 @@
 package com.waibleapp.waible.model;
 
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Created by mircea.ionita on 3/30/2017.
+ * Created by Mircea-Ionel on 4/2/2017.
  */
 
 @IgnoreExtraProperties
@@ -16,18 +14,22 @@ public class MenuCategory {
 
     @Exclude
     private String categoryId;
-    private Map<String, String> name;
-    private int total;
+    private HashMap<String, String> name;
+    private Integer total;
 
     public MenuCategory() {
     }
 
-    public MenuCategory(Map<String, String> name, int total) {
+    public MenuCategory(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public MenuCategory(HashMap<String, String> name, Integer total) {
         this.name = name;
         this.total = total;
     }
 
-    public MenuCategory(String categoryId, Map<String, String> name, int total) {
+    public MenuCategory(String categoryId, HashMap<String, String> name, Integer total) {
         this.categoryId = categoryId;
         this.name = name;
         this.total = total;
@@ -41,28 +43,20 @@ public class MenuCategory {
         this.categoryId = categoryId;
     }
 
-    public Map<String, String> getName() {
+    public HashMap<String, String> getName() {
         return name;
     }
 
-    public void setName(Map<String, String> name) {
+    public void setName(HashMap<String, String> name) {
         this.name = name;
     }
 
-    public int getTotal() {
+    public Integer getTotal() {
         return total;
     }
 
-    public void setTotal(int total) {
+    public void setTotal(Integer total) {
         this.total = total;
-    }
-
-    @Exclude
-    public Map<String, Object> getFirebaseMap(){
-        Map<String, Object> result = new HashMap<>();
-        result.put("name", name);
-        result.put("total", total);
-        return result;
     }
 
     @Override

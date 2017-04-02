@@ -8,12 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -28,15 +24,11 @@ import com.waibleapp.waible.listeners.RecyclerItemClickListener;
 import com.waibleapp.waible.model.Constants;
 import com.waibleapp.waible.model.MenuCategory;
 import com.waibleapp.waible.model.MenuItem;
-import com.waibleapp.waible.model.MenuItems;
 import com.waibleapp.waible.model.SessionEntity;
 import com.waibleapp.waible.services.DatabaseService;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class MenuCategoryFragment extends Fragment implements OnUpdateUIListener {
 
@@ -86,6 +78,7 @@ public class MenuCategoryFragment extends Fragment implements OnUpdateUIListener
         menuCategoryImageView.setImageResource(R.drawable.grill);
 
         menuItemList = new ArrayList<>();
+
         getMenuItemsForCategory(sessionEntity.getRestaurant().getRestaurantId(), menuCategory.getCategoryId());
 
         menuItemAdapter = new MenuItemAdapter(menuItemList, getContext());
@@ -128,11 +121,8 @@ public class MenuCategoryFragment extends Fragment implements OnUpdateUIListener
             @Override
             public void onCompleteSuccessCallback(Object result) {
                 isLoading = false;
-                MenuItems list = (MenuItems) result;
-                menuItemList.clear();
-                for (MenuItem item : list.getMenuItems()){
-                    menuItemList.add(item);
-                }
+                List<MenuItem> list = (List<MenuItem>) result;
+                menuItemList.addAll(list);
                 Log.v(TAG, "menuItemList" + menuItemList.toString());
                 updateUI();
             }

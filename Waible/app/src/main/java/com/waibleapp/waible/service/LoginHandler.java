@@ -1,4 +1,4 @@
-package com.waibleapp.waible.services;
+package com.waibleapp.waible.service;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,23 +10,22 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.waibleapp.waible.R;
-import com.waibleapp.waible.activities.MainActivity;
-import com.waibleapp.waible.listeners.OnCompleteCallback;
+import com.waibleapp.waible.listeners.OnFirebaseCompleteListener;
 
 /**
- * Created by mircea.ionita on 3/29/2017.
+ * Created by Mircea-Ionel on 4/2/2017.
  */
 
 public class LoginHandler {
 
-    private final String TAG = "LoginHandler";
+    private final String LOG_TAG = LoginHandler.class.getSimpleName();
 
     private static LoginHandler instance;
-    private Context context;
 
+    private Context context;
     private FirebaseAuth mAuth;
 
-    private LoginHandler(Context context) {
+    private LoginHandler(Context context){
         this.context = context;
         mAuth = FirebaseAuth.getInstance();
     }
@@ -38,29 +37,35 @@ public class LoginHandler {
         return instance;
     }
 
-    public void createUserWithEmailAndPassword(String email, String password, final OnCompleteCallback callback){
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+    public void signInWithEmailAndPassword(String email, String password, final OnFirebaseCompleteListener callback){
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    callback.onCompleteSuccessCallback(new Object());
+                    callback.onCompleteSuccessCalback(null);
                 }else {
                     if (task.getException() instanceof FirebaseAuthUserCollisionException){
                         Toast.makeText(context, R.string.auth_user_already_exists, Toast.LENGTH_SHORT).show();
                     }
+                    Toast.makeText(context, R.string.auth_failed, Toast.LENGTH_SHORT).show();
+                    callback.onCompleteErrorCalback(task.getException().getMessage());
                 }
             }
         });
     }
 
-    public void signInWithEmailAndPassword(String email, String password, final OnCompleteCallback callback){
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+    public void createUserWithEmailAndPassword(String email, String password, final OnFirebaseCompleteListener callback){
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    callback.onCompleteSuccessCallback(new Object());
+                    callback.onCompleteSuccessCalback(null);
                 }else {
+                    if (task.getException() instanceof FirebaseAuthUserCollisionException){
+                        Toast.makeText(context, R.string.auth_user_already_exists, Toast.LENGTH_SHORT).show();
+                    }
                     Toast.makeText(context, R.string.auth_failed, Toast.LENGTH_SHORT).show();
+                    callback.onCompleteErrorCalback(task.getException().getMessage());
                 }
             }
         });

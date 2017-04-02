@@ -4,146 +4,77 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.waibleapp.waible.R;
-import com.waibleapp.waible.model.Constants;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.waibleapp.waible.activities.AuthActivity;
+import com.waibleapp.waible.activities.MainActivity;
 
 public class AuthFragment extends Fragment {
 
-    private final String LOG_TAG = "AuthFragment";
+    private final String TAG = "AuthFragment";
 
     private OnAuthFragmentInteractionListener mListener;
-
-    private EditText fullNameEditText;
-    private EditText emailEditText;
-    private EditText passwordEditText;
-    private TextView signInSignUp;
-    private Button signInButton;
-    private Button signUpButton;
-
-    private boolean isSigningUp = false;
+    ActionBar actionBar;
 
     public AuthFragment() {
-
-    }
-
-    public static AuthFragment newInstance() {
-        AuthFragment fragment = new AuthFragment();
-
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        actionBar = ((AuthActivity) getActivity()).getSupportActionBar();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view  = inflater.inflate(R.layout.fragment_auth, container, false);
-        fullNameEditText = (EditText) view.findViewById(R.id.full_name_edit_text);
-        emailEditText = (EditText) view.findViewById(R.id.email_edit_text);
-        passwordEditText = (EditText) view.findViewById(R.id.password_edit_text);
-        signInSignUp = (TextView) view.findViewById(R.id.sign_in_sign_up);
+        View view = inflater.inflate(R.layout.fragment_auth, container, false);
 
-        signInSignUp.setOnClickListener(new View.OnClickListener() {
+        if (actionBar != null && actionBar.isShowing()){
+            actionBar.hide();
+        }
+
+        final EditText authEmailEditText = (EditText) view.findViewById(R.id.auth_email_edit_text);
+        final EditText authPasswordEditText = (EditText) view.findViewById(R.id.auth_password_edit_text);
+        Button authLoginButton = (Button) view.findViewById(R.id.auth_login_button);
+
+        authLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                isSigningUp = !isSigningUp;
-                updateUI();
-            }
-        });
-
-        signInButton = (Button) view.findViewById(R.id.sign_in_button);
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String emailString = emailEditText.getText().toString();
-                String passwordString = passwordEditText.getText().toString();
-
-                if (validateSignInForm(emailString, passwordString)){
-                    onSignInButtonPressed(emailString, passwordString);
+                String email = authEmailEditText.getText().toString();
+                String password = authPasswordEditText.getText().toString();
+                if (validateForm(email, password)){
+                    onLoginButtonPressed(email, password);
                 }
             }
         });
-
-        signUpButton = (Button) view.findViewById(R.id.sign_up_button);
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.v(LOG_TAG, "SIGN UP");
-                String fullNameString = fullNameEditText.getText().toString();
-                String emailString = emailEditText.getText().toString();
-                String passwordString = passwordEditText.getText().toString();
-                onSignUpButtonPressed(fullNameString, emailString, passwordString);
-                if (validateSignUpForm(fullNameString, emailString, passwordString)){
-                    onSignUpButtonPressed(fullNameString, emailString, passwordString);
-                }
-            }
-        });
-
-        updateUI();
 
         return view;
     }
 
-    private boolean validateSignUpForm(String fullName, String email, String password){
-        if (fullName == null || fullName.length() < 3 || !fullName.matches("[a-zA-Z]+")){
-            return false;
-        }
-        if (validateSignInForm(email, password)){
-            return true;
-        }else {
-            return false;
+    private void onLoginButtonPressed(String email, String password) {
+        if (mListener != null) {
+            mListener.onLoginButtonPressed(email, password);
         }
     }
 
-    private boolean validateSignInForm(String email, String password){
+    private boolean validateForm(String email, String password){
         if (email == null || email.length() < 3 || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             return false;
         }
-        if (password == null || password.length() < 5){
+        if (password == null || password.length() < 6){
             return false;
         }
         return true;
-    }
-
-    public void onSignInButtonPressed(String email, String password) {
-        if (mListener != null) {
-            mListener.onAuthFragmentInteractionSignIn(email, password);
-        }
-    }
-
-    public void onSignUpButtonPressed(String name, String email, String password) {
-        if (mListener != null) {
-            mListener.onAuthFragmentInteractionSignUp(name, email, password);
-        }
-    }
-
-    private void updateUI(){
-        if (isSigningUp){
-            fullNameEditText.setVisibility(View.VISIBLE);
-            signUpButton.setVisibility(View.VISIBLE);
-            signInButton.setVisibility(View.GONE);
-            signInSignUp.setText(R.string.sign_in_text_view);
-        }else{
-            fullNameEditText.setVisibility(View.GONE);
-            signUpButton.setVisibility(View.GONE);
-            signInSignUp.setText(R.string.sign_up_text_view);
-        }
     }
 
     @Override
@@ -153,7 +84,7 @@ public class AuthFragment extends Fragment {
             mListener = (OnAuthFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnAuthFragmentInteractionListener");
         }
     }
 
@@ -164,7 +95,7 @@ public class AuthFragment extends Fragment {
     }
 
     public interface OnAuthFragmentInteractionListener {
-        void onAuthFragmentInteractionSignIn(String email, String password);
-        void onAuthFragmentInteractionSignUp(String name, String email, String password);
+        void onLoginButtonPressed(String email, String password);
+        void onGoToRegisterButtonPressed();
     }
 }

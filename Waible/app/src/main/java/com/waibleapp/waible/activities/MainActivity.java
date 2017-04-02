@@ -1,71 +1,72 @@
 package com.waibleapp.waible.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.gson.Gson;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.waibleapp.waible.R;
-import com.waibleapp.waible.fragments.MainFragment;
-import com.waibleapp.waible.fragments.MenuCategoryFragment;
-import com.waibleapp.waible.fragments.MenuFragment;
-import com.waibleapp.waible.fragments.ScannerFragment;
-import com.waibleapp.waible.model.Constants;
-import com.waibleapp.waible.listeners.OnUpdateUIListener;
-import com.waibleapp.waible.model.MenuCategory;
+import com.waibleapp.waible.fragments.CategoriesFragment;
+import com.waibleapp.waible.fragments.RestaurantFragment;
+import com.waibleapp.waible.listeners.OnFirebaseCompleteListener;
+import com.waibleapp.waible.model.Restaurant;
 import com.waibleapp.waible.model.SessionEntity;
 import com.waibleapp.waible.model.User;
-import com.waibleapp.waible.services.LoginHandler;
+import com.waibleapp.waible.service.DatabaseService;
+import com.waibleapp.waible.service.LoginHandler;
 
-import java.util.ArrayList;
-import java.util.List;
+public class MainActivity extends AppCompatActivity implements RestaurantFragment.OnRestaurantFragmentInteractionListener, CategoriesFragment.OnCategoriesFragmentInteractionListener{
 
-public class MainActivity extends AppCompatActivity implements MainFragment.OnMainFragmentInteractionListener, ScannerFragment.OnScannerFragmentInteractionListener,
-        MenuFragment.OnMenuFragmentInteractionListener, MenuCategoryFragment.OnMenuCategoryFragmentInteractionListener{
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private final String TAG = "MainActivity";
-
-    private List<OnUpdateUIListener> onUpdateUIListeners;
+    private LoginHandler loginHandler;
+    private DatabaseService databaseService;
+    private SessionEntity sessionEntity;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    private LoginHandler loginHandler;
 
     private FragmentManager fragmentManager;
-    private Gson gson;
-
-    private SessionEntity sessionEntity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sessionEntity = SessionEntity.getInstance();
+        Log.v(LOG_TAG, "============================= onCreate ===========================");
+
         mAuth = FirebaseAuth.getInstance();
         loginHandler = LoginHandler.getInstance(this);
-        gson = new Gson();
-        onUpdateUIListeners = new ArrayList<>();
+        databaseService = DatabaseService.getInstance();
+        sessionEntity = SessionEntity.getInstance();
+        fragmentManager = getSupportFragmentManager();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentById(R.id.main_fragment_container);
+        Fragment fragment = fragmentManager.findFragmentById(R.id.main_activity_fragment_container);
+
+        if (!sessionEntity.isScanned()){
+            startBarcodeScanner();
+        }
 
         if(fragment == null){
-            fragment = new ScannerFragment();
-            fragmentManager.beginTransaction().add(R.id.main_fragment_container, fragment).commit();
+            fragment = new RestaurantFragment();
+            fragmentManager.beginTransaction().add(R.id.main_activity_fragment_container, fragment).commit();
         }
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -75,9 +76,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
                 if (firebaseUser == null){
                     openAuthActivity();
                 }else {
-                    User user = new User();
-                    user.setUid(firebaseUser.getUid());
+                    User user = new User(firebaseUser.getUid());
                     sessionEntity.setUser(user);
+                    getUserFromDatabase(user.getUserId());
                 }
             }
         };
@@ -89,58 +90,106 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
         finish();
     }
 
-    private void openMainFragment(String restaurantId){
-        MainFragment fragment = new MainFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.MainBundleParams.restaurantIdParam, restaurantId);
-        fragment.setArguments(bundle);
-        fragmentManager.beginTransaction().replace(R.id.main_fragment_container, fragment).commit();
+    private void openRestaurantFragment(){
+        fragmentManager.beginTransaction().replace(R.id.main_activity_fragment_container, RestaurantFragment.newInstance(sessionEntity.getRestaurant().getName())).commit();
     }
 
-    private void openMenuFragment(){
-        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                .replace(R.id.main_fragment_container, new MenuFragment()).addToBackStack(null).commit();
+    private void openCategoriesFragment(){
+        Log.v(LOG_TAG, " ==== " + sessionEntity.getRestaurant().toString());
+        fragmentManager.beginTransaction().replace(R.id.main_activity_fragment_container, CategoriesFragment.newInstance(sessionEntity.getRestaurant().getRestaurantId())).addToBackStack(null).commit();
     }
 
-    private void openMenuCategoryFragment(MenuCategory menuCategory, int position){
-        MenuCategoryFragment fragment = new MenuCategoryFragment();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(Constants.MenuCategoryBundleParams.menuCategoryParam, gson.toJson(menuCategory));
-        bundle.putInt(Constants.MenuCategoryBundleParams.positionParam, position);
-        fragment.setArguments(bundle);
-        fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                .replace(R.id.main_fragment_container, fragment).addToBackStack(null).commit();
+    private void startBarcodeScanner(){
+        new IntentIntegrator(this).initiateScan();
     }
 
-    private void openScannerFragment(){
-        fragmentManager.beginTransaction().replace(R.id.main_fragment_container, new ScannerFragment()).commit();
+    private void getUserFromDatabase(String userId){
+        databaseService.getUserFromDatabase(userId, new OnFirebaseCompleteListener() {
+            @Override
+            public void onCompleteSuccessCalback(Object result) {
+                sessionEntity.setUser((User) result);
+                sessionEntity.setScanned(true);
+            }
+
+            @Override
+            public void onCompleteErrorCalback(String message) {
+                Log.d(LOG_TAG, message);
+            }
+        });
     }
 
-    private void setUserToSession(String uid){
-        User user;
-        if (sessionEntity.getUser() == null){
-            user = new User();
-            user.setUid(uid);
-            sessionEntity.setUser(user);
+    private void getRestaurantFromDatabase(String restaurantUserId, String restaurantId){
+        databaseService.getRestaurantFromDatabase(restaurantUserId, restaurantId, new OnFirebaseCompleteListener() {
+            @Override
+            public void onCompleteSuccessCalback(Object result) {
+                sessionEntity.setRestaurant((Restaurant) result);
+                Log.v(LOG_TAG, " ==== " + sessionEntity.getRestaurant().toString());
+                openRestaurantFragment();
+            }
+
+            @Override
+            public void onCompleteErrorCalback(String message) {
+                Log.d(LOG_TAG, message);
+                Toast.makeText(getApplicationContext(), R.string.restaurant_not_found, Toast.LENGTH_SHORT).show();
+                startBarcodeScanner();
+            }
+        });
+    }
+
+    private void processScannerResult(String content){
+        String webPage = "http://waibleapp.com/restaurants/";
+        if (content == null || content.length() <= 0 || !content.startsWith(webPage)){
+            Toast.makeText(this, R.string.qr_code_no_match, Toast.LENGTH_SHORT).show();
+            startBarcodeScanner();
         }else {
-            user = sessionEntity.getUser();
-            user.setUid(uid);
-            sessionEntity.setUser(user);
+            String procesedString = content.replace(webPage, "");
+            String[] uri = procesedString.split("/");
+            sessionEntity.setTableNo(uri[2]);
+            getRestaurantFromDatabase(uri[0], uri[1]);
         }
     }
 
-    private void updateUI(){
-        for (OnUpdateUIListener listener : onUpdateUIListeners){
-            listener.onUpdateUIListener();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+//                Toast.makeText(this, R.string.cancelled, Toast.LENGTH_LONG).show();
+                startBarcodeScanner();
+            } else {
+                processScannerResult(result.getContents());
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    public void addOnUpdateUIListeners(OnUpdateUIListener listener){
-        onUpdateUIListeners.add(listener);
+    @Override
+    protected void onStart() {
+        Log.v(LOG_TAG, "============================= onStart ===========================");
+        mAuth.addAuthStateListener(mAuthStateListener);
+        super.onStart();
     }
 
-    public void removeOnUpdateUIListeners(OnUpdateUIListener listener){
-        onUpdateUIListeners.remove(listener);
+    @Override
+    protected void onResume() {
+        Log.v(LOG_TAG, "============================= onResume ===========================");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.v(LOG_TAG, "============================= onPause ===========================");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.v(LOG_TAG, "============================= onStop ===========================");
+        if (mAuthStateListener != null) {
+            mAuth.removeAuthStateListener(mAuthStateListener);
+        }
+        super.onStop();
     }
 
     @Override
@@ -153,64 +202,33 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnMa
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.menu_main_action_settings) {
+        if (id == R.id.menu_action_settings) {
             return true;
         }
-
-        if (id == R.id.menu_main_action_sign_out) {
+        if (id == R.id.menu_action_sign_out) {
             loginHandler.signOut();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthStateListener);
+    public void onRestaurantFragmentOpenMenuInteraction() {
+        openCategoriesFragment();
     }
 
     @Override
-    protected void onStop() {
-        if (mAuthStateListener != null) {
-            mAuth.removeAuthStateListener(mAuthStateListener);
-        }
-        super.onStop();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
-    @Override
-    public void onMainFragmentInteractionMenuButton() {
-        openMenuFragment();
-    }
-
-    @Override
-    public void onMainFragmentInteractionWaiterButton() {
+    public void onRestaurantFragmentCallWaiterInteraction() {
 
     }
 
     @Override
-    public void onMainFragmentInteractionCheckButton() {
+    public void onRestaurantFragmentGetCheckInteraction() {
 
     }
 
     @Override
-    public void onScannerFragmentInteraction(String restaurantId) {
-        openMainFragment(restaurantId);
-    }
-
-    @Override
-    public void onMenuFragmentInteraction(MenuCategory menuCategory, int position) {
-        openMenuCategoryFragment(menuCategory, position);
-    }
-
-    @Override
-    public void onMenuCategoryFragmentInteraction(Uri uri) {
+    public void onCategoriesFragmentItemSelectedInteraction(String categoryId) {
 
     }
 }

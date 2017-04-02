@@ -11,42 +11,33 @@ import android.view.ViewGroup;
 
 import com.waibleapp.waible.R;
 import com.waibleapp.waible.activities.AuthActivity;
-import com.waibleapp.waible.activities.MainActivity;
 
 public class RegisterFragment extends Fragment {
 
-    private final String TAG = "RegisterFragment";
-
     private OnRegisterFragmentInteractionListener mListener;
-    ActionBar actionBar;
 
     public RegisterFragment() {
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        actionBar = ((AuthActivity) getActivity()).getSupportActionBar();
-        if (getArguments() != null) {
-
+        ActionBar actionBar = ((AuthActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null && actionBar.isShowing()){
+            actionBar.hide();
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_register, container, false);
-
-        if (actionBar != null && actionBar.isShowing()){
-            actionBar.hide();
-        }
-
-        return view;
+        return inflater.inflate(R.layout.fragment_register, container, false);
     }
 
-    public void onButtonPressed(String email, String password) {
+    public void onRegisterButtonPressed(String email, String password) {
         if (mListener != null) {
-            mListener.onRegisterButtonPressed(email, password);
+            mListener.onRegisterFragmentRegisterInteraction(email, password);
         }
     }
 
@@ -57,7 +48,7 @@ public class RegisterFragment extends Fragment {
             mListener = (OnRegisterFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnRegisterFragmentInteractionListener");
         }
     }
 
@@ -68,7 +59,6 @@ public class RegisterFragment extends Fragment {
     }
 
     public interface OnRegisterFragmentInteractionListener {
-        void onRegisterButtonPressed(String email, String password);
-        void onGoToLoginButtonPressed();
+        void onRegisterFragmentRegisterInteraction(String email, String password);
     }
 }

@@ -7,10 +7,9 @@
     tools:context="com.waibleapp.waible.activities.AuthActivity">
 
     <FrameLayout
-        android:id="@+id/auth_fragment_container"
+        android:id="@+id/auth_activity_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
     </FrameLayout>
 </RelativeLayout>

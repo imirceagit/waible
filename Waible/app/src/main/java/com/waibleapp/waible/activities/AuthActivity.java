@@ -1,27 +1,23 @@
 package com.waibleapp.waible.activities;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.waibleapp.waible.R;
 import com.waibleapp.waible.fragments.AuthFragment;
-import com.waibleapp.waible.fragments.MainFragment;
 import com.waibleapp.waible.fragments.RegisterFragment;
-import com.waibleapp.waible.listeners.OnCompleteCallback;
-import com.waibleapp.waible.model.Constants;
-import com.waibleapp.waible.model.SessionEntity;
-import com.waibleapp.waible.services.LoginHandler;
+import com.waibleapp.waible.listeners.OnFirebaseCompleteListener;
+import com.waibleapp.waible.service.LoginHandler;
 
 public class AuthActivity extends AppCompatActivity implements AuthFragment.OnAuthFragmentInteractionListener, RegisterFragment.OnRegisterFragmentInteractionListener{
 
-    private final String TAG = "AuthActivity";
+    private final String LOG_TAG = AuthActivity.class.getSimpleName();
 
     private FragmentManager fragmentManager;
     private LoginHandler loginHandler;
@@ -37,24 +33,24 @@ public class AuthActivity extends AppCompatActivity implements AuthFragment.OnAu
         loginHandler = LoginHandler.getInstance(this);
 
         fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentById(R.id.auth_fragment_container);
-
-        if(fragment == null){
-            fragment = new AuthFragment();
-            fragmentManager.beginTransaction().add(R.id.auth_fragment_container, fragment).commit();
-        }
+        Fragment fragment = fragmentManager.findFragmentById(R.id.auth_activity_fragment_container);
 
         if (mAuth.getCurrentUser() != null) {
             openMainActivity();
+        }else {
+            if(fragment == null){
+                fragment = new AuthFragment();
+                fragmentManager.beginTransaction().add(R.id.auth_activity_fragment_container, fragment).commit();
+            }
         }
     }
 
     private void openAuthFragment(){
-        fragmentManager.beginTransaction().replace(R.id.auth_fragment_container, new AuthFragment()).commit();
+        fragmentManager.beginTransaction().replace(R.id.auth_activity_fragment_container, new AuthFragment()).commit();
     }
 
     private void openRegisterFragment(){
-        fragmentManager.beginTransaction().replace(R.id.auth_fragment_container, new RegisterFragment()).commit();
+        fragmentManager.beginTransaction().replace(R.id.auth_activity_fragment_container, new RegisterFragment()).commit();
     }
 
     private void openMainActivity(){
@@ -64,47 +60,22 @@ public class AuthActivity extends AppCompatActivity implements AuthFragment.OnAu
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onLoginButtonPressed(String email, String password) {
-        loginHandler.signInWithEmailAndPassword(email, password, new OnCompleteCallback() {
+    public void onAuthFragmentLoginInteraction(String email, String password) {
+        loginHandler.signInWithEmailAndPassword(email, password, new OnFirebaseCompleteListener() {
             @Override
-            public void onCompleteSuccessCallback(Object result) {
+            public void onCompleteSuccessCalback(Object result) {
                 openMainActivity();
             }
 
             @Override
-            public void onCompleteErrorCallback(String result) {
-
+            public void onCompleteErrorCalback(String message) {
+                Log.e(LOG_TAG, message);
             }
         });
     }
 
     @Override
-    public void onGoToRegisterButtonPressed() {
+    public void onRegisterFragmentRegisterInteraction(String email, String password) {
 
-    }
-
-    @Override
-    public void onRegisterButtonPressed(String email, String password) {
-
-    }
-
-    @Override
-    public void onGoToLoginButtonPressed() {
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 }

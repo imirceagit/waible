@@ -1,0 +1,123 @@
+﻿Waible
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes to be committed:
+#	modified:   1.0/Waible/.idea/gradle.xml
+#	modified:   1.0/Waible/.idea/misc.xml
+#	modified:   1.0/Waible/.idea/modules.xml
+#	modified:   1.0/Waible/app/build.gradle
+#	modified:   1.0/Waible/app/src/main/AndroidManifest.xml
+#	new file:   1.0/Waible/app/src/main/java/com/waibleapp/waible/activities/AuthActivity.java
+#	modified:   1.0/Waible/app/src/main/java/com/waibleapp/waible/activities/MainActivity.java
+#	new file:   1.0/Waible/app/src/main/java/com/waibleapp/waible/activities/SplashActivity.java
+#	renamed:    Waible/app/src/main/java/com/waibleapp/waible/adapters/MenuCategoryAdapter.java -> 1.0/Waible/app/src/main/java/com/waibleapp/waible/adapters/MenuCategoryAdapter.java
+#	renamed:    Waible/app/src/main/java/com/waibleapp/waible/adapters/MenuItemAdapter.java -> 1.0/Waible/app/src/main/java/com/waibleapp/waible/adapters/MenuItemAdapter.java
+#	modified:   1.0/Waible/app/src/main/java/com/waibleapp/waible/fragments/AuthFragment.java
+#	renamed:    Waible/app/src/main/java/com/waibleapp/waible/fragments/MainFragment.java -> 1.0/Waible/app/src/main/java/com/waibleapp/waible/fragments/MainFragment.java
+#	renamed:    Waible/app/src/main/java/com/waibleapp/waible/fragments/MenuCategoryFragment.java -> 1.0/Waible/app/src/main/java/com/waibleapp/waible/fragments/MenuCategoryFragment.java
+#	renamed:    Waible/app/src/main/java/com/waibleapp/waible/fragments/MenuFragment.java -> 1.0/Waible/app/src/main/java/com/waibleapp/waible/fragments/MenuFragment.java
+#	new file:   1.0/Waible/app/src/main/java/com/waibleapp/waible/fragments/RegisterFragment.java
+#	renamed:    Waible/app/src/main/java/com/waibleapp/waible/fragments/ScannerFragment.java -> 1.0/Waible/app/src/main/java/com/waibleapp/waible/fragments/ScannerFragment.java
+#	renamed:    Waible/app/src/main/java/com/waibleapp/waible/holders/MenuCategoryViewHolder.java -> 1.0/Waible/app/src/main/java/com/waibleapp/waible/holders/MenuCategoryViewHolder.java
+#	renamed:    Waible/app/src/main/java/com/waibleapp/waible/holders/MenuItemViewHolder.java -> 1.0/Waible/app/src/main/java/com/waibleapp/waible/holders/MenuItemViewHolder.java
+#	renamed:    Waible/app/src/main/java/com/waibleapp/waible/listeners/OnCompleteCallback.java -> 1.0/Waible/app/src/main/java/com/waibleapp/waible/listeners/OnCompleteCallback.java
+#	renamed:    Waible/app/src/main/java/com/waibleapp/waible/listeners/OnUpdateUIListener.java -> 1.0/Waible/app/src/main/java/com/waibleapp/waible/listeners/OnUpdateUIListener.java
+#	new file:   1.0/Waible/app/src/main/java/com/waibleapp/waible/listeners/RecyclerItemClickListener.java
+#	renamed:    Waible/app/src/main/java/com/waibleapp/waible/model/Constants.java -> 1.0/Waible/app/src/main/java/com/waibleapp/waible/model/Constants.java
+#	renamed:    Waible/app/src/main/java/com/waibleapp/waible/model/Localization.java -> 1.0/Waible/app/src/main/java/com/waibleapp/waible/model/Localization.java
+#	new file:   1.0/Waible/app/src/main/java/com/waibleapp/waible/model/MenuCategory.java
+#	new file:   1.0/Waible/app/src/main/java/com/waibleapp/waible/model/MenuItem.java
+#	new file:   1.0/Waible/app/src/main/java/com/waibleapp/waible/model/PriceTier.java
+#	new file:   1.0/Waible/app/src/main/java/com/waibleapp/waible/model/Restaurant.java
+#	new file:   1.0/Waible/app/src/main/java/com/waibleapp/waible/model/RestaurantMenu.java
+#	new file:   1.0/Waible/app/src/main/java/com/waibleapp/waible/model/SessionEntity.java
+#	modified:   1.0/Waible/app/src/main/java/com/waibleapp/waible/model/User.java
+#	deleted:    1.0/Waible/app/src/main/java/com/waibleapp/waible/model/UserDb.java
+#	renamed:    Waible/app/src/main/java/com/waibleapp/waible/services/DatabaseService.java -> 1.0/Waible/app/src/main/java/com/waibleapp/waible/services/DatabaseService.java
+#	renamed:    Waible/app/src/main/java/com/waibleapp/waible/services/LoginHandler.java -> 1.0/Waible/app/src/main/java/com/waibleapp/waible/services/LoginHandler.java
+#	renamed:    Waible/app/src/main/res/anim/enter_from_left.xml -> 1.0/Waible/app/src/main/res/anim/enter_from_left.xml
+#	renamed:    Waible/app/src/main/res/anim/enter_from_right.xml -> 1.0/Waible/app/src/main/res/anim/enter_from_right.xml
+#	renamed:    Waible/app/src/main/res/anim/exit_to_left.xml -> 1.0/Waible/app/src/main/res/anim/exit_to_left.xml
+#	renamed:    Waible/app/src/main/res/anim/exit_to_right.xml -> 1.0/Waible/app/src/main/res/anim/exit_to_right.xml
+#	copied:     Waible/app/src/main/res/mipmap-xxxhdpi/app_logo.png -> 1.0/Waible/app/src/main/res/drawable/app_logo.png
+#	new file:   1.0/Waible/app/src/main/res/drawable/bitmap.png
+#	new file:   1.0/Waible/app/src/main/res/drawable/breakfast.jpg
+#	new file:   1.0/Waible/app/src/main/res/drawable/grill.jpg
+#	new file:   1.0/Waible/app/src/main/res/drawable/splash_screen.xml
+#	new file:   1.0/Waible/app/src/main/res/layout/activity_auth.xml
+#	modified:   1.0/Waible/app/src/main/res/layout/activity_main.xml
+#	new file:   1.0/Waible/app/src/main/res/layout/card_menu_category.xml
+#	new file:   1.0/Waible/app/src/main/res/layout/card_menu_item.xml
+#	copied:     1.0/Waible/app/src/main/res/layout/activity_main.xml -> 1.0/Waible/app/src/main/res/layout/content_main.xml
+#	modified:   1.0/Waible/app/src/main/res/layout/fragment_auth.xml
+#	renamed:    Waible/app/src/main/res/layout/fragment_main.xml -> 1.0/Waible/app/src/main/res/layout/fragment_main.xml
+#	renamed:    Waible/app/src/main/res/layout/fragment_menu.xml -> 1.0/Waible/app/src/main/res/layout/fragment_menu.xml
+#	renamed:    Waible/app/src/main/res/layout/fragment_menu_category.xml -> 1.0/Waible/app/src/main/res/layout/fragment_menu_category.xml
+#	new file:   1.0/Waible/app/src/main/res/layout/fragment_register.xml
+#	renamed:    Waible/app/src/main/res/layout/fragment_scanner.xml -> 1.0/Waible/app/src/main/res/layout/fragment_scanner.xml
+#	deleted:    1.0/Waible/app/src/main/res/menu/main_menu.xml
+#	new file:   1.0/Waible/app/src/main/res/menu/menu_main.xml
+#	new file:   1.0/Waible/app/src/main/res/mipmap-hdpi/app_logo.png
+#	modified:   1.0/Waible/app/src/main/res/mipmap-hdpi/ic_launcher.png
+#	new file:   1.0/Waible/app/src/main/res/mipmap-mdpi/app_logo.png
+#	modified:   1.0/Waible/app/src/main/res/mipmap-mdpi/ic_launcher.png
+#	new file:   1.0/Waible/app/src/main/res/mipmap-xhdpi/app_logo.png
+#	modified:   1.0/Waible/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+#	new file:   1.0/Waible/app/src/main/res/mipmap-xxhdpi/app_logo.png
+#	modified:   1.0/Waible/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+#	new file:   1.0/Waible/app/src/main/res/mipmap-xxxhdpi/app_logo.png
+#	modified:   1.0/Waible/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+#	deleted:    1.0/Waible/app/src/main/res/values-ro/strings.xml
+#	new file:   1.0/Waible/app/src/main/res/values-v21/styles.xml
+#	modified:   1.0/Waible/app/src/main/res/values/colors.xml
+#	modified:   1.0/Waible/app/src/main/res/values/dimens.xml
+#	modified:   1.0/Waible/app/src/main/res/values/strings.xml
+#	modified:   1.0/Waible/app/src/main/res/values/styles.xml
+#	modified:   1.0/Waible/build.gradle
+#	modified:   1.0/Waible/settings.gradle
+#	modified:   Waible/app/build.gradle
+#	modified:   Waible/app/proguard-rules.pro
+#	modified:   Waible/app/src/main/AndroidManifest.xml
+#	modified:   Waible/app/src/main/java/com/waibleapp/waible/activities/AuthActivity.java
+#	modified:   Waible/app/src/main/java/com/waibleapp/waible/activities/MainActivity.java
+#	new file:   Waible/app/src/main/java/com/waibleapp/waible/adapters/CategoryAdapter.java
+#	new file:   Waible/app/src/main/java/com/waibleapp/waible/decorators/VerticalSpaceItemDecorator.java
+#	modified:   Waible/app/src/main/java/com/waibleapp/waible/fragments/AuthFragment.java
+#	new file:   Waible/app/src/main/java/com/waibleapp/waible/fragments/CategoriesFragment.java
+#	modified:   Waible/app/src/main/java/com/waibleapp/waible/fragments/RegisterFragment.java
+#	new file:   Waible/app/src/main/java/com/waibleapp/waible/fragments/RestaurantFragment.java
+#	new file:   Waible/app/src/main/java/com/waibleapp/waible/holders/CategoryViewHolder.java
+#	new file:   Waible/app/src/main/java/com/waibleapp/waible/listeners/OnFirebaseCompleteListener.java
+#	modified:   Waible/app/src/main/java/com/waibleapp/waible/model/MenuCategory.java
+#	modified:   Waible/app/src/main/java/com/waibleapp/waible/model/MenuItem.java
+#	deleted:    Waible/app/src/main/java/com/waibleapp/waible/model/MenuItems.java
+#	modified:   Waible/app/src/main/java/com/waibleapp/waible/model/PriceTier.java
+#	modified:   Waible/app/src/main/java/com/waibleapp/waible/model/Restaurant.java
+#	modified:   Waible/app/src/main/java/com/waibleapp/waible/model/RestaurantMenu.java
+#	modified:   Waible/app/src/main/java/com/waibleapp/waible/model/SessionEntity.java
+#	modified:   Waible/app/src/main/java/com/waibleapp/waible/model/User.java
+#	new file:   Waible/app/src/main/java/com/waibleapp/waible/service/DatabaseService.java
+#	new file:   Waible/app/src/main/java/com/waibleapp/waible/service/LoginHandler.java
+#	new file:   Waible/app/src/main/java/com/waibleapp/waible/utils/Constants.java
+#	new file:   Waible/app/src/main/java/com/waibleapp/waible/utils/Localization.java
+#	new file:   Waible/app/src/main/res/drawable/bitmap.png
+#	modified:   Waible/app/src/main/res/layout/activity_auth.xml
+#	modified:   Waible/app/src/main/res/layout/activity_main.xml
+#	modified:   Waible/app/src/main/res/layout/card_menu_item.xml
+#	modified:   Waible/app/src/main/res/layout/content_main.xml
+#	modified:   Waible/app/src/main/res/layout/fragment_auth.xml
+#	new file:   Waible/app/src/main/res/layout/fragment_categories.xml
+#	new file:   Waible/app/src/main/res/layout/fragment_restaurant.xml
+#	modified:   Waible/app/src/main/res/menu/menu_main.xml
+#	modified:   Waible/app/src/main/res/mipmap-hdpi/app_logo.png
+#	modified:   Waible/app/src/main/res/mipmap-mdpi/app_logo.png
+#	modified:   Waible/app/src/main/res/mipmap-xhdpi/app_logo.png
+#	modified:   Waible/app/src/main/res/mipmap-xxhdpi/app_logo.png
+#	modified:   Waible/app/src/main/res/mipmap-xxxhdpi/app_logo.png
+#	modified:   Waible/app/src/main/res/values/strings.xml
+#
+

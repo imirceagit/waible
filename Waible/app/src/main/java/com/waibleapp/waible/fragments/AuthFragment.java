@@ -5,25 +5,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.waibleapp.waible.R;
 import com.waibleapp.waible.activities.AuthActivity;
-import com.waibleapp.waible.activities.MainActivity;
 
 public class AuthFragment extends Fragment {
 
-    private final String TAG = "AuthFragment";
+    private final String LOG_TAG = AuthFragment.class.getSimpleName();
 
     private OnAuthFragmentInteractionListener mListener;
-    ActionBar actionBar;
 
     public AuthFragment() {
     }
@@ -31,7 +26,10 @@ public class AuthFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        actionBar = ((AuthActivity) getActivity()).getSupportActionBar();
+        ActionBar actionBar = ((AuthActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null && actionBar.isShowing()){
+            actionBar.hide();
+        }
     }
 
     @Override
@@ -39,15 +37,10 @@ public class AuthFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_auth, container, false);
 
-        if (actionBar != null && actionBar.isShowing()){
-            actionBar.hide();
-        }
-
         final EditText authEmailEditText = (EditText) view.findViewById(R.id.auth_email_edit_text);
         final EditText authPasswordEditText = (EditText) view.findViewById(R.id.auth_password_edit_text);
-        Button authLoginButton = (Button) view.findViewById(R.id.auth_login_button);
 
-        authLoginButton.setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.auth_login_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String email = authEmailEditText.getText().toString();
@@ -61,13 +54,13 @@ public class AuthFragment extends Fragment {
         return view;
     }
 
-    private void onLoginButtonPressed(String email, String password) {
+    public void onLoginButtonPressed(String email, String password) {
         if (mListener != null) {
-            mListener.onLoginButtonPressed(email, password);
+            mListener.onAuthFragmentLoginInteraction(email, password);
         }
     }
 
-    private boolean validateForm(String email, String password){
+    public boolean validateForm(String email, String password){
         if (email == null || email.length() < 3 || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             return false;
         }
@@ -95,7 +88,6 @@ public class AuthFragment extends Fragment {
     }
 
     public interface OnAuthFragmentInteractionListener {
-        void onLoginButtonPressed(String email, String password);
-        void onGoToRegisterButtonPressed();
+        void onAuthFragmentLoginInteraction(String email, String password);
     }
 }

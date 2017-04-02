@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">Waible</string>
 
+    <!--ActionBar Menu-->
     <string name="menu_main_action_settings">Settings</string>
     <string name="menu_main_action_sign_out">Sign Out</string>
 
+    <!--Auth Fragment-->
     <string name="auth_app_title_one">welcome to</string>
     <string name="auth_app_title_two">Waible</string>
     <string name="auth_email_text_view">Email</string>
@@ -11,19 +13,31 @@
     <string name="auth_login_button">Login</string>
     <string name="auth_go_to_register">Don\'t have an account? Register now!</string>
 
+    <!--Register Fragment-->
+    <string name="register_app_title_one">welcome to</string>
+    <string name="register_app_title_two">Waible</string>
+    <string name="register_email_text_view">Email</string>
+    <string name="register_password_text_view">Password</string>
+    <string name="register_login_button">Login</string>
+    <string name="register_go_to_register">Don\'t have an account? Register now!</string>
+
+    <!--Main Fragment-->
     <string name="main_title_one">welcome to</string>
     <string name="see_menu_button">See the Menu</string>
     <string name="call_waiter_button">Call for a Waiter</string>
     <string name="get_check_button">Get the Check</string>
 
+    <!--units-->
     <string name="no_items_unit">pcs</string>
     <string name="price_unit">ron</string>
 
     <!-- TOASTS -->
     <string name="auth_failed">Authentication failed</string>
     <string name="auth_user_already_exists">A user with this email already exists!</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="qr_code_no_match">The QR code is invalid!</string>
+    <string name="restaurant_not_found">Restaurant not found</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
 </resources>

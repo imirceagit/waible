@@ -1,14 +1,12 @@
 package com.waibleapp.waible.model;
 
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Created by mircea.ionita on 3/30/2017.
+ * Created by Mircea-Ionel on 4/2/2017.
  */
 
 @IgnoreExtraProperties
@@ -17,7 +15,7 @@ public class Restaurant {
     @Exclude
     private String restaurantId;
     private String name;
-    private int numberOfTables;
+    private Integer numberOfTables;
     private PriceTier priceTier;
 
     public Restaurant() {
@@ -27,24 +25,17 @@ public class Restaurant {
         this.restaurantId = restaurantId;
     }
 
-    public Restaurant(String name, int numberOfTables, PriceTier priceTier) {
-        this.restaurantId = FirebaseDatabase.getInstance().getReference().push().getKey();
+    public Restaurant(String name, Integer numberOfTables, PriceTier priceTier) {
         this.name = name;
         this.numberOfTables = numberOfTables;
         this.priceTier = priceTier;
     }
 
-    public Restaurant(String restaurantId, String name, int numberOfTables, PriceTier priceTier) {
+    public Restaurant(String restaurantId, String name, Integer numberOfTables, PriceTier priceTier) {
         this.restaurantId = restaurantId;
         this.name = name;
         this.numberOfTables = numberOfTables;
         this.priceTier = priceTier;
-    }
-
-    public void cloneRestaurant(Restaurant restaurant){
-        this.setName(restaurant.getName());
-        this.setNumberOfTables(restaurant.getNumberOfTables());
-        this.setPriceTier(restaurant.getPriceTier());
     }
 
     public String getRestaurantId() {
@@ -63,11 +54,11 @@ public class Restaurant {
         this.name = name;
     }
 
-    public int getNumberOfTables() {
+    public Integer getNumberOfTables() {
         return numberOfTables;
     }
 
-    public void setNumberOfTables(int numberOfTables) {
+    public void setNumberOfTables(Integer numberOfTables) {
         this.numberOfTables = numberOfTables;
     }
 
@@ -77,14 +68,6 @@ public class Restaurant {
 
     public void setPriceTier(PriceTier priceTier) {
         this.priceTier = priceTier;
-    }
-
-    @Exclude
-    public Map<String, Object> getFirebaseMap(){
-        Map<String, Object> result = priceTier.getFirebaseMap();
-        result.put("name", name);
-        result.put("numberOfTables", numberOfTables);
-        return result;
     }
 
     @Override
