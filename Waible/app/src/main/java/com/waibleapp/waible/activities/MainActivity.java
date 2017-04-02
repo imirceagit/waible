@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements RestaurantFragmen
     }
 
     private void openRestaurantFragment(){
-        fragmentManager.beginTransaction().replace(R.id.main_activity_fragment_container, RestaurantFragment.newInstance(sessionEntity.getRestaurant().getName())).commit();
+        fragmentManager.beginTransaction().replace(R.id.main_activity_fragment_container, RestaurantFragment.newInstance()).commit();
     }
 
     private void openCategoriesFragment(){

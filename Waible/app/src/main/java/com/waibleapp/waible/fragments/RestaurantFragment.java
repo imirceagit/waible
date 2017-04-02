@@ -30,29 +30,22 @@ public class RestaurantFragment extends Fragment {
     private Button getCheckButton;
     private ActionBar actionBar;
 
+    private SessionEntity sessionEntity;
+
     private boolean isLoading = true;
-    private String restaurantName;
 
     public RestaurantFragment() {
 
     }
 
-    public static RestaurantFragment newInstance(String restaurantName){
+    public static RestaurantFragment newInstance(){
         RestaurantFragment fragment = new RestaurantFragment();
-        Bundle args = new Bundle();
-        args.putString(Constants.FragmentArgumentParams.restaurantFragmentRestaurantNameParam, restaurantName);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            restaurantName = getArguments().getString(Constants.FragmentArgumentParams.restaurantFragmentRestaurantNameParam);
-        }else {
-            restaurantName = "";
-        }
         actionBar = ((MainActivity) getActivity()).getSupportActionBar();
     }
 
@@ -61,10 +54,11 @@ public class RestaurantFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_restaurant, container, false);
 
+        sessionEntity = SessionEntity.getInstance();
         mainFragmentLoadingPanel = (RelativeLayout) view.findViewById(R.id.main_fragment_loading_panel);
 
         mainRestaurantName = (TextView) view.findViewById(R.id.main_restaurant_name);
-        mainRestaurantName.setText(restaurantName);
+        mainRestaurantName.setText(sessionEntity.getRestaurant().getName());
 
         seeMenuButton = (Button) view.findViewById(R.id.see_menu_button);
         seeMenuButton.setOnClickListener(new View.OnClickListener() {
