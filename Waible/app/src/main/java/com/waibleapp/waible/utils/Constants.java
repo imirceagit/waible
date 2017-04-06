@@ -7,8 +7,9 @@ package com.waibleapp.waible.utils;
 public class Constants {
 
     public interface FragmentArgumentParams{
-        String restaurantFragmentRestaurantNameParam = "com.waibleapp.FragmentArgumentParams.restaurantName";
         String categoriesFragmentRestaurantIdParam = "com.waibleapp.CategoriesFragment.restaurantId";
+        String itemsFragmentRestaurantIdParam = "com.waibleapp.ItemsFragment.restaurantId";
+        String itemsFragmentCategoryIdParam = "com.waibleapp.ItemsFragment.categoryId";
     }
 
     public interface ActivityArgumentParams{

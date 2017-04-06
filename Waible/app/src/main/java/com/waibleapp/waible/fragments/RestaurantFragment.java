@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.andexert.library.RippleView;
 import com.waibleapp.waible.R;
 import com.waibleapp.waible.activities.MainActivity;
 import com.waibleapp.waible.model.SessionEntity;
@@ -58,7 +59,9 @@ public class RestaurantFragment extends Fragment {
         mainFragmentLoadingPanel = (RelativeLayout) view.findViewById(R.id.main_fragment_loading_panel);
 
         mainRestaurantName = (TextView) view.findViewById(R.id.main_restaurant_name);
-        mainRestaurantName.setText(sessionEntity.getRestaurant().getName());
+        if (sessionEntity.getRestaurant() != null){
+            mainRestaurantName.setText(sessionEntity.getRestaurant().getName());
+        }
 
         seeMenuButton = (Button) view.findViewById(R.id.see_menu_button);
         seeMenuButton.setOnClickListener(new View.OnClickListener() {
@@ -68,12 +71,7 @@ public class RestaurantFragment extends Fragment {
             }
         });
 
-        callWaiterButton = (Button) view.findViewById(R.id.call_waiter_button);
-        callWaiterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
+
 
         getCheckButton = (Button) view.findViewById(R.id.get_check_button);
         getCheckButton.setOnClickListener(new View.OnClickListener() {

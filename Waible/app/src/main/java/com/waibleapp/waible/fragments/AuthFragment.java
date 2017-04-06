@@ -26,10 +26,6 @@ public class AuthFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActionBar actionBar = ((AuthActivity) getActivity()).getSupportActionBar();
-        if (actionBar != null && actionBar.isShowing()){
-            actionBar.hide();
-        }
     }
 
     @Override

@@ -21,6 +21,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.waibleapp.waible.R;
 import com.waibleapp.waible.fragments.CategoriesFragment;
+import com.waibleapp.waible.fragments.ItemsFragment;
 import com.waibleapp.waible.fragments.RestaurantFragment;
 import com.waibleapp.waible.listeners.OnFirebaseCompleteListener;
 import com.waibleapp.waible.model.Restaurant;
@@ -29,7 +30,8 @@ import com.waibleapp.waible.model.User;
 import com.waibleapp.waible.service.DatabaseService;
 import com.waibleapp.waible.service.LoginHandler;
 
-public class MainActivity extends AppCompatActivity implements RestaurantFragment.OnRestaurantFragmentInteractionListener, CategoriesFragment.OnCategoriesFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements RestaurantFragment.OnRestaurantFragmentInteractionListener, CategoriesFragment.OnCategoriesFragmentInteractionListener,
+        ItemsFragment.OnItemsFragmentInteractionListener{
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -95,8 +97,11 @@ public class MainActivity extends AppCompatActivity implements RestaurantFragmen
     }
 
     private void openCategoriesFragment(){
-        Log.v(LOG_TAG, " ==== " + sessionEntity.getRestaurant().toString());
         fragmentManager.beginTransaction().replace(R.id.main_activity_fragment_container, CategoriesFragment.newInstance(sessionEntity.getRestaurant().getRestaurantId())).addToBackStack(null).commit();
+    }
+
+    private void openItemsFragment(String categoryId){
+        fragmentManager.beginTransaction().replace(R.id.main_activity_fragment_container, ItemsFragment.newInstance(sessionEntity.getRestaurant().getRestaurantId(), categoryId)).addToBackStack(null).commit();
     }
 
     private void startBarcodeScanner(){
@@ -229,6 +234,11 @@ public class MainActivity extends AppCompatActivity implements RestaurantFragmen
 
     @Override
     public void onCategoriesFragmentItemSelectedInteraction(String categoryId) {
+        openItemsFragment(categoryId);
+    }
+
+    @Override
+    public void onItemsFragmentItemsSelectedInteraction(String menuItemId) {
 
     }
 }
